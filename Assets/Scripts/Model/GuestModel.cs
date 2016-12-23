@@ -9,6 +9,11 @@ namespace TikiAL
     public class GuestModel : BaseModel<GuestModel>
     {
         private string _folderName = PathConfig.Guest;
+        private string _guestLotteryFileName = PathConfig.Debug + "guestlottery.tikial";
+
+        //嘉宾抽奖结果 <key=嘉宾姓名, value=所中奖项level>
+        private Dictionary<string, int> _guestLotteryDic;
+        //嘉宾列表
         private List<string> _guestName;
 
         public List<string> guestName
@@ -24,6 +29,7 @@ namespace TikiAL
         protected override void InitData()
         {
             LoadGuestNameFromFolder();
+            LoadGuestLotteryDicFromFile();
             base.InitData();
         }
 
@@ -32,6 +38,42 @@ namespace TikiAL
             if (index < 0 || index >= guestNum)
                 return null;
             return _guestName[index];
+        }
+
+        /// <summary>
+        /// 查询某个嘉宾是否中奖，以及奖项level，-1表示未中奖
+        /// </summary>
+        public int GetLotteryLevelByName(string name)
+        {
+            if (_guestLotteryDic != null && _guestLotteryDic.ContainsKey(name))
+                return _guestLotteryDic[name];
+            return -1;
+        }
+
+        /// <summary>
+        /// 根据嘉宾索引，设置该嘉宾的中奖信息
+        /// </summary>
+        public void SetLotteryLevelByIndex(int index, int level = -1)
+        {
+            string name = GetGuestNameByIndex(index);
+            if (string.IsNullOrEmpty(name))
+                return;
+
+            if (_guestLotteryDic == null)
+                _guestLotteryDic = new Dictionary<string, int>();
+
+            if (level >= 0)
+            {//中奖
+                if (!_guestLotteryDic.ContainsKey(name))
+                    _guestLotteryDic.Add(name, level);
+                else
+                    _guestLotteryDic[name] = level;
+            }
+            else
+            {//未中奖
+                if (_guestLotteryDic.ContainsKey(name))
+                    _guestLotteryDic.Remove(name);
+            }
         }
 
         private int LoadGuestNameFromFolder()
@@ -59,10 +101,34 @@ namespace TikiAL
             }
             else
             {
-                Log.Debug("LoadGuestNameFromFolder() error, folder name is not exist.");
+                Log.Debug("LoadGuestNameFromFolder() failed, folder name is not exist.");
             }
 
             return length;
+        }
+
+        private void LoadGuestLotteryDicFromFile()
+        {
+            if (_guestLotteryDic == null)
+                _guestLotteryDic = new Dictionary<string, int>();
+
+            bool isOk = Util.LoadDictFromFile(_guestLotteryDic, _guestLotteryFileName);
+            if (!isOk)
+            {
+                Log.Debug("LoadGuestLotteryDicFromFile() dic length = " + _guestLotteryDic.Count.ToString());
+            }
+            else
+            {
+                Log.Debug("LoadGuestLotteryDicFromFile() failed.");
+            }
+        }
+
+        public void SaveGuestLotteryDicToFile()
+        {
+            if (_guestLotteryDic != null)
+            {
+                Util.SaveDictToFile(_guestLotteryDic, _guestLotteryFileName);
+            }
         }
     }
 }

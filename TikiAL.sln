@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TikiAL.CSharp.Plugins", "TikiAL.CSharp.Plugins.csproj", "{58D007E1-CA0B-B796-6FB9-F30E5CD57410}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TikiAL.CSharp", "TikiAL.CSharp.csproj", "{C5B6CFAB-DBB8-62D0-F0AD-ECAD6F44EF81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TikiAL.CSharp.Editor", "TikiAL.CSharp.Editor.csproj", "{619B1C2B-7648-4F3E-22B1-0DBCC6A2C688}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{58D007E1-CA0B-B796-6FB9-F30E5CD57410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58D007E1-CA0B-B796-6FB9-F30E5CD57410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58D007E1-CA0B-B796-6FB9-F30E5CD57410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58D007E1-CA0B-B796-6FB9-F30E5CD57410}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5B6CFAB-DBB8-62D0-F0AD-ECAD6F44EF81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5B6CFAB-DBB8-62D0-F0AD-ECAD6F44EF81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5B6CFAB-DBB8-62D0-F0AD-ECAD6F44EF81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5B6CFAB-DBB8-62D0-F0AD-ECAD6F44EF81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{619B1C2B-7648-4F3E-22B1-0DBCC6A2C688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{619B1C2B-7648-4F3E-22B1-0DBCC6A2C688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{619B1C2B-7648-4F3E-22B1-0DBCC6A2C688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{619B1C2B-7648-4F3E-22B1-0DBCC6A2C688}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

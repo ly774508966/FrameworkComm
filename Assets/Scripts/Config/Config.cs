@@ -1,10 +1,61 @@
-﻿public class PathConfig
+﻿using System.IO;
+
+public class PathConfig
 {
-    public static readonly string Root = "./Res/";
-    public static readonly string Log = "./Debug/";
-    public static readonly string Config = Root + "Config/";
-    public static readonly string Gift = Root + "Gift/";
-    public static readonly string Guest = Root + "Guest/";
+    public static string Root
+    {
+        get
+        {
+            string path = "./Res/";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            return path;
+        }
+    }
+
+    public static string Debug
+    {
+        get
+        {
+            string path = "./Debug/";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            return path;
+        }
+    }
+
+    public static string Config
+    {
+        get
+        {
+            string path = Root + "Config/";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            return path;
+        }
+    }
+
+    public static string Gift
+    {
+        get
+        {
+            string path = Root + "Gift/";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            return path;
+        }
+    }
+
+    public static string Guest
+    {
+        get
+        {
+            string path = Root + "Guest/";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+            return path;
+        }
+    }
 }
 
 public class SceneName
@@ -15,7 +66,7 @@ public class SceneName
 
 public class GameConfig
 {
-    public static bool IsLogEnable = true;
+    public static readonly bool IsLogEnable = true;
     public static readonly int MaxDepth = 1000;
     public static readonly int MaxSortingOrder = 100;
 }

@@ -25,7 +25,7 @@ namespace TikiAL
 
         public virtual void OnKeyBackRelease()
         {
-            Log.Debug("OnKeyBackRelease() back to last scene.");
+            Log.Debug("OnKeyBackRelease() -> BackToLastScene()");
             BackToLastScene();
         }
     }

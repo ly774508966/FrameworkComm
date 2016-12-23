@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.IO;
 
@@ -98,6 +99,228 @@ namespace Framework
             }
 
             return true;
+        }
+
+        public static bool LoadListFromFile(List<string> list, string filePath)
+        {
+            if (!File.Exists(filePath) || list == null)
+                return false;
+
+            try
+            {
+                using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+                {
+                    while (true)
+                    {
+                        string msg = reader.ReadString();
+                        if (msg != null)
+                            list.Add(msg);
+                        else break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("LoadListFromFile() " + ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public static void SaveListToFile(List<string> list, string filePath)
+        {
+            try
+            {
+                using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
+                {
+                    foreach (string key in list)
+                    {
+                        writer.Write(key);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("SaveListToFile() " + ex.Message);
+            }
+        }
+
+        public static bool LoadDictFromFile(Dictionary<string, string> dict, string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+                    {
+                        while (true)
+                        {
+                            string dictKey = reader.ReadString();
+                            string dictValue = reader.ReadString();
+
+                            if (dictKey != null && dictValue != null)
+                                dict[dictKey] = dictValue;
+                            else break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("LoadDictFromFile() " + ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool LoadDictFromFile(Dictionary<int, int> dict, string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+                    {
+                        while (true)
+                        {
+                            int dictKey = reader.ReadInt32();
+                            int dictValue = reader.ReadInt32();
+
+                            dict[dictKey] = dictValue;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("LoadDictFromFile() " + ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool LoadDictFromFile(Dictionary<string, int> dict, string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+                    {
+                        while (true)
+                        {
+                            string dictKey = reader.ReadString();
+                            int dictValue = reader.ReadInt32();
+
+                            if (dictKey != null)
+                                dict[dictKey] = dictValue;
+                            else break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("LoadDictFromFile() " + ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public static void SaveDictToFile(Dictionary<string, string> dict, string filePath)
+        {
+            try
+            {
+                using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
+                {
+                    foreach (string key in dict.Keys)
+                    {
+                        writer.Write(key);
+                        writer.Write(dict[key]);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("SaveDictToFile() " + ex.Message);
+            }
+        }
+
+        public static void SaveDictToFile(Dictionary<int, int> dict, string filePath)
+        {
+            try
+            {
+                using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
+                {
+
+                    foreach (int key in dict.Keys)
+                    {
+                        writer.Write(key);
+                        writer.Write(dict[key]);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("SaveDictToFile() " + ex.Message);
+            }
+        }
+
+        public static void SaveDictToFile(Dictionary<string, int> dict, string filePath)
+        {
+            try
+            {
+                using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
+                {
+
+                    foreach (string key in dict.Keys)
+                    {
+                        writer.Write(key);
+                        writer.Write(dict[key]);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("SaveDictToFile() " + ex.Message);
+            }
+        }
+
+        public static void SaveBytesToFile(byte[] allBytes, string filePath)
+        {
+            try
+            {
+                using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
+                {
+                    writer.Write(allBytes);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("SaveBytesToFile() " + ex.Message);
+            }
+        }
+
+        public static byte[] LoadBytesFromFile(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                try
+                {
+                    return File.ReadAllBytes(filePath);
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug("LoadBytesFromFile() " + ex.Message);
+                    return null;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

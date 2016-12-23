@@ -37,12 +37,8 @@ namespace Framework
         {
             get
             {
-                string path = PathConfig.Log;
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                return path + "TikiAL.log";
+                string path = PathConfig.Debug + "TikiAL.log";
+                return path;
             }
         }
 
@@ -85,7 +81,7 @@ namespace Framework
             {
                 StackTrace st = new StackTrace(true);
 
-                int frameIndex = (Application.platform == RuntimePlatform.IPhonePlayer ? 1 : 2);
+                int frameIndex = 2;
                 for (int printIndex = 0; printIndex < mMaxLogFrameCount && frameIndex < st.FrameCount - 1; printIndex++, frameIndex++)
                 {
                     StackFrame sf = st.GetFrame(frameIndex);
