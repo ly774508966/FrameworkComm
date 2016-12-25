@@ -10,6 +10,7 @@ namespace TikiAL
     {
         private string _folderName = PathConfig.Guest;
         private string _guestLotteryFileName = PathConfig.Debug + "guestlottery.tikial";
+        private string _resultFileName = PathConfig.Debug + "result.txt";
 
         //嘉宾抽奖结果 <key=嘉宾姓名, value=所中奖项level>
         private Dictionary<string, int> _guestLotteryDic;
@@ -29,33 +30,88 @@ namespace TikiAL
         protected override void InitData()
         {
             LoadGuestNameFromFolder();
-            LoadGuestLotteryDicFromFile();
+            LoadLotteryDicFromFile();
             base.InitData();
         }
 
-        public string GetGuestNameByIndex(int index)
+        /// <summary>
+        /// 根据嘉宾索引，获取嘉宾姓名
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public string GetNameByGuestIndex(int index)
         {
-            if (index < 0 || index >= guestNum)
+            if (!IsValidGuestIndex(index))
                 return null;
             return _guestName[index];
         }
 
         /// <summary>
-        /// 查询某个嘉宾是否中奖，以及奖项level，-1表示未中奖
+        /// 根据嘉宾姓名查询中奖信息，返回奖项level，-1表示未中奖
         /// </summary>
-        public int GetLotteryLevelByName(string name)
+        public int GetLotteryByGuestName(string name)
         {
+            if (!IsValidGuestName(name))
+                return -1;
             if (_guestLotteryDic != null && _guestLotteryDic.ContainsKey(name))
                 return _guestLotteryDic[name];
             return -1;
         }
 
+        public int GetLotteryByGuestIndex(int index)
+        {
+            if (!IsValidGuestIndex(index))
+                return -1;
+            return GetLotteryByGuestName(GetNameByGuestIndex(index));
+        }
+
         /// <summary>
         /// 根据嘉宾索引，设置该嘉宾的中奖信息
         /// </summary>
-        public void SetLotteryLevelByIndex(int index, int level = -1)
+        public void SetLotteryByGuestIndex(int index, int level = -1)
         {
-            string name = GetGuestNameByIndex(index);
+            SetLotteryDictionary(GetNameByGuestIndex(index), level);
+            SaveLotteryDicToFile();
+        }
+
+        /// <summary>
+        /// 根据嘉宾索引数组，批量设置该嘉宾的中奖信息
+        /// </summary>
+        public void SetLotteryByGuestIndex(int[] index, int[] level)
+        {
+            int iLength = index != null ? index.Length : 0;
+            int lLength = level != null ? level.Length : 0;
+            if (iLength == lLength)
+            {
+                for (int i = 0; i < iLength; i++)
+                {
+                    SetLotteryDictionary(GetNameByGuestIndex(index[i]), level[i]);
+                }
+                SaveLotteryDicToFile();
+            }
+        }
+
+        public void SaveGuestLotteryResult()
+        {
+            if (_guestLotteryDic != null || _guestLotteryDic.Count > 0)
+            {
+                Util.SaveDictionaryToTxt(_guestLotteryDic, _resultFileName, "————嘉宾抽奖结果————");
+                Log.Debug("SaveGuestLotteryResult() success, length = " + _guestLotteryDic.Count.ToString());
+            }
+        }
+
+        private bool IsValidGuestIndex(int index)
+        {
+            return index >= 0 && index < guestNum;
+        }
+
+        private bool IsValidGuestName(string name)
+        {
+            return !string.IsNullOrEmpty(name) && _guestName.Contains(name);
+        }
+
+        private void SetLotteryDictionary(string name, int level)
+        {
             if (string.IsNullOrEmpty(name))
                 return;
 
@@ -74,6 +130,8 @@ namespace TikiAL
                 if (_guestLotteryDic.ContainsKey(name))
                     _guestLotteryDic.Remove(name);
             }
+
+            Log.Debug("SetLotteryDictionary() key = " + name + ", value = " + level.ToString());
         }
 
         private int LoadGuestNameFromFolder()
@@ -107,7 +165,7 @@ namespace TikiAL
             return length;
         }
 
-        private void LoadGuestLotteryDicFromFile()
+        private void LoadLotteryDicFromFile()
         {
             if (_guestLotteryDic == null)
                 _guestLotteryDic = new Dictionary<string, int>();
@@ -123,7 +181,7 @@ namespace TikiAL
             }
         }
 
-        public void SaveGuestLotteryDicToFile()
+        private void SaveLotteryDicToFile()
         {
             if (_guestLotteryDic != null)
             {

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.IO;
+using System.Text;
 
 namespace Framework
 {
@@ -323,10 +324,39 @@ namespace Framework
             return null;
         }
 
+        public static void SaveDictionaryToTxt(Dictionary<string, int> glDic, string filePath, string title = "")
+        {
+            if (string.IsNullOrEmpty(filePath)
+                || glDic == null
+                || glDic.Count == 0)
+                return;
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(title + "\n");
+            foreach (KeyValuePair<string, int> kvp in glDic)
+            {
+                sb.AppendLine(kvp.Value.ToString() + ", " + kvp.Key);
+            }
+            sb.AppendLine("\nLength = " + glDic.Count.ToString());
+            sb.AppendLine(DateTime.Now.ToString("yy-MM-dd HH:mm:ss"));
+
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(File.Open(filePath, FileMode.Create)))
+                {
+                    writer.Write(sb.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("SaveDictionaryToTxt() " + ex.Message);
+            }
+        }
+
         /// <summary>
         /// 随机从 0 ~ max-1 中取出不重复的 num 个整数
         /// </summary>
-        public int[] GetRandom(int num, int max)
+        public static int[] GetRandom(int num, int max)
         {
             if (num < 0 || max < 0 || num > max)
                 return null;
