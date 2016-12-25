@@ -16,9 +16,9 @@ namespace TikiAL
     public class Gift
     {
         public Gift() { }
-        public Gift(int index, string level, string name, string picture, int count, int price)
+        public Gift(int id, string level, string name, string picture, int count, int price)
         {
-            this.index = index;
+            this.id = id;
             this.level = level;
             this.name = name;
             this.picture = picture;
@@ -26,7 +26,7 @@ namespace TikiAL
             this.price = price;
         }
 
-        public int index { set; get; }
+        public int id { set; get; }
         public string level { set; get; }
         public string name { set; get; }
         public string picture { set; get; }
