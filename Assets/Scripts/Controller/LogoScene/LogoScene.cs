@@ -7,11 +7,46 @@ namespace TikiAL
 {
     public class LogoScene : BaseSceneFadeInOut
     {
+        public GameObject buttonGo;
+        public UIEventListener restartBtn;
+        public UIEventListener continueBtn;
+        public UIEventListener quitBtn;
+        public GameObject loadingGo;
+
         private bool _ready = false;
 
         protected override void InitUI()
         {
             base.InitUI();
+
+            restartBtn.onClick = OnClickRestart;
+            continueBtn.onClick = OnClickContinue;
+            quitBtn.onClick = OnClickQuit;
+
+            SwitchButton();
+        }
+
+        private void OnClickRestart(GameObject go)
+        {
+            LotteryModel.instance.ResetLottery();
+            GotoScene(SceneName.MainScene);
+        }
+
+        private void OnClickContinue(GameObject go)
+        {
+            LotteryModel.instance.SetLotteryFromHistory();
+            GotoScene(SceneName.MainScene);
+        }
+
+        private void OnClickQuit(GameObject go)
+        {
+            BackToLastScene();
+        }
+
+        private void SwitchButton()
+        {
+            buttonGo.SetActive(_ready);
+            loadingGo.SetActive(!_ready);
         }
 
         protected override void OnSceneEaseInFinish()
@@ -19,7 +54,7 @@ namespace TikiAL
             base.OnSceneEaseInFinish();
             DebugSystemInfo();
             StartLoadRes();
-            StartCoroutine(GoToMainScene());
+            StartCoroutine(CheckReady());
         }
 
         private void StartLoadRes()
@@ -33,7 +68,7 @@ namespace TikiAL
             });
         }
 
-        private IEnumerator GoToMainScene()
+        private IEnumerator CheckReady()
         {
             Log.Debug("Check() start.");
 
@@ -44,16 +79,16 @@ namespace TikiAL
                     && GuestModel.instance.ready
                     && LotteryModel.instance.ready)
                 {
-                    Log.Debug("Check() end -> GoToMainScene()");
+                    Log.Debug("Check() end, game is ready.");
                     break;
                 }
 
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(1.0f);
             }
 
-            yield return new WaitForSeconds(1.0f);
+            yield return new WaitForSeconds(2.0f);
 
-            GotoScene(SceneName.MainScene);
+            SwitchButton();
         }
 
         #region DebugSystemInfo

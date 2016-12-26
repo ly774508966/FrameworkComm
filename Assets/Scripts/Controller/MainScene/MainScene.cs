@@ -9,8 +9,6 @@ namespace TikiAL
         protected override void InitUI()
         {
             base.InitUI();
-            //LotteryModel.instance.SetLotteryByGuestIndex(new int[] { 0, 1, 2 }, 2);
-            LotteryModel.instance.SendGiftByLottery();
         }
     }
 }

@@ -47,7 +47,7 @@ namespace TikiAL
             return 0;
         }
 
-        public Gift GetGiftById(int id)
+        private Gift GetGiftById(int id)
         {
             Gift result = null;
 

@@ -16,7 +16,7 @@ namespace TikiAL
         //嘉宾列表
         private List<string> _guestName;
 
-        public List<string> guestName
+        public List<string> allGuestList
         {
             get { return _guestName; }
         }
@@ -30,23 +30,6 @@ namespace TikiAL
         {
             LoadGuestNameFromFolder();
             base.InitData();
-        }
-
-        /// <summary>
-        /// 根据嘉宾索引，获取嘉宾姓名
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public string GetGuestNameByIndex(int index)
-        {
-            if (!IsValidGuestIndex(index))
-                return null;
-            return _guestName[index];
-        }
-
-        public bool IsValidGuestIndex(int index)
-        {
-            return index >= 0 && index < guestNum;
         }
 
         public bool IsValidGuestName(string name)

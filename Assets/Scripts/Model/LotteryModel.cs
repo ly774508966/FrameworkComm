@@ -7,7 +7,7 @@ using Framework;
 namespace TikiAL
 {
     /// <summary>
-    /// 中奖数据，耦合GuestModel和GiftModel
+    /// 抽奖数据
     /// </summary>
     public class LotteryModel : BaseModel<LotteryModel>
     {
@@ -24,7 +24,7 @@ namespace TikiAL
         }
 
         /// <summary>
-        /// 根据嘉宾name查询中奖信息，返回奖项id，-1表示未中奖
+        /// 根据嘉宾name查询中奖信息，返回礼品id，-1表示未中奖
         /// </summary>
         public int GetGiftIdByGuestName(string name)
         {
@@ -36,63 +36,89 @@ namespace TikiAL
         }
 
         /// <summary>
-        /// 根据嘉宾index查询中奖信息，返回奖项id，-1表示未中奖
+        /// 获取当前能够参与抽奖的嘉宾列表，返回列表长度
         /// </summary>
-        public int GetGiftIdByGuestIndex(int index)
+        public int GetCanLotteryGuestList(out List<string> result)
         {
-            if (!GuestModel.instance.IsValidGuestIndex(index))
-                return -1;
-            return GetGiftIdByGuestName(GuestModel.instance.GetGuestNameByIndex(index));
+            result = null;
+
+            List<string> allGuestList = GuestModel.instance.allGuestList;
+            if (allGuestList != null)
+            {
+                int length = allGuestList.Count;
+                if (length > 0)
+                {
+                    if (_lotteryDic == null || _lotteryDic.Count == 0)
+                    {//没有嘉宾中奖
+                        result = allGuestList;
+                    }
+                    else
+                    {//嘉宾中奖，不能再次参与抽奖
+                        result = new List<string>();
+
+                        for (int i = 0; i < length; i++)
+                        {
+                            string name = allGuestList[i];
+                            if (_lotteryDic.ContainsKey(name) && _lotteryDic[name] >= 0)
+                                continue;
+                            else
+                                result.Add(name);
+                        }
+                    }
+                }
+            }
+
+            return result != null ? result.Count : 0;
         }
 
         /// <summary>
-        /// 根据嘉宾index，设置该嘉宾的中奖信息(奖品id)
+        /// 根据嘉宾name，设置嘉宾的中奖信息(礼品id)
         /// </summary>
-        public void SetLotteryByGuestIndex(int index, int giftId)
+        public void Lottery(string name, int giftId)
         {
-            SetLotteryDictionary(GuestModel.instance.GetGuestNameByIndex(index), giftId);
+            SetLotteryDictionary(name, giftId);
             SaveLotteryDicToFile();
         }
 
         /// <summary>
-        /// 根据嘉宾index数组，批量设置嘉宾的中奖信息(奖品id)
+        /// 根据嘉宾name列表，批量设置嘉宾的中奖信息(礼品id)
         /// </summary>
-        public void SetLotteryByGuestIndex(int[] index, int giftId)
+        public void Lottery(List<string> name, int giftId)
         {
-            int length = index != null ? index.Length : 0;
+            int length = name != null ? name.Count : 0;
             for (int i = 0; i < length; i++)
             {
-                SetLotteryDictionary(GuestModel.instance.GetGuestNameByIndex(index[i]), giftId);
+                SetLotteryDictionary(name[i], giftId);
             }
             SaveLotteryDicToFile();
         }
 
         /// <summary>
-        /// 继续抽奖，基于历史嘉宾抽奖数据
+        /// 根据嘉宾抽奖的本地数据，设置嘉宾的中奖信息
         /// </summary>
-        public void SendGiftByLottery()
+        public void SetLotteryFromHistory()
         {
             if (_lotteryDic != null && _lotteryDic.Count > 0)
             {
-                Dictionary<int, int> idCountDic = new Dictionary<int, int>();
+                Dictionary<int, int> giftDic = new Dictionary<int, int>();
                 foreach (int giftId in _lotteryDic.Values)
                 {
-                    if (!idCountDic.ContainsKey(giftId))
-                        idCountDic.Add(giftId, 1);
+                    if (!giftDic.ContainsKey(giftId))
+                        giftDic.Add(giftId, 1);
                     else
-                        idCountDic[giftId]++;
+                        giftDic[giftId]++;
                 }
 
-                Log.Debug("SendGiftByLottery() continue lottery from history data.");
+                Log.Debug("SetLotteryFromHistory() Dic length = " + giftDic.Count.ToString());
 
-                GiftModel.instance.SendGift(idCountDic);
+                GiftModel.instance.SendGift(giftDic);
             }
         }
 
         /// <summary>
-        /// 清理嘉宾中奖信息
+        /// 清除嘉宾中奖信息
         /// </summary>
-        public void ClearLottery()
+        public void ResetLottery()
         {
             if (_lotteryDic != null)
             {
@@ -142,8 +168,10 @@ namespace TikiAL
             if (_lotteryDic == null)
                 _lotteryDic = new Dictionary<string, int>();
 
-            Util.LoadDictFromFile(_lotteryDic, _lotteryFileName);
-            Log.Debug("LoadLotteryDicFromFile() Dic length = " + _lotteryDic.Count.ToString());
+            if (Util.LoadDictFromFile(_lotteryDic, _lotteryFileName))
+                Log.Debug("LoadLotteryDicFromFile() Dic length = " + _lotteryDic.Count.ToString());
+            else
+                Log.Debug("LoadLotteryDicFromFile() failed.");
         }
 
         private void SaveLotteryDicToFile()

@@ -73,6 +73,9 @@ namespace TikiAL
 
             _maskGo.SetActive(true);
 
+            BoxCollider box = _maskGo.GetComponent<BoxCollider>();
+            if (box != null) box.enabled = true;
+
             UIWidget widget = _maskGo.GetComponent<UIWidget>();
             if (widget == null)
             {
@@ -93,7 +96,11 @@ namespace TikiAL
                     widget.alpha = value;
                 }),
                 "onupdatetarget", gameObject,
-                "oncomplete", Callback.CreateAction(fCallback),
+                "oncomplete", Callback.CreateAction(delegate ()
+                {
+                    if (box != null) box.enabled = false;
+                    fCallback();
+                }),
                 "oncompletetarget", gameObject));
         }
     }
