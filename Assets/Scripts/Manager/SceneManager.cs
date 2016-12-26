@@ -42,6 +42,8 @@ namespace TikiAL
 
         private IEnumerator GotoSceneAsync(string value, Callback.FunVoid fCallback)
         {
+            yield return null;
+
             if (value != Application.loadedLevelName)
             {
                 sceneList.Add(Application.loadedLevelName);

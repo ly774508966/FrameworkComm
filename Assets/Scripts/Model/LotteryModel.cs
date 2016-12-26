@@ -108,7 +108,7 @@ namespace TikiAL
         {
             if (_lotteryDic != null || _lotteryDic.Count > 0)
             {
-                Util.SaveDictionaryToTxt(_lotteryDic, _txtFileName, "————嘉宾抽奖结果————");
+                Util.SaveDictionaryToText(_lotteryDic, _txtFileName, "————嘉宾抽奖结果————");
                 Log.Debug("ExportLotteryInfo() success, length = " + _lotteryDic.Count.ToString());
             }
         }
@@ -143,7 +143,7 @@ namespace TikiAL
                 _lotteryDic = new Dictionary<string, int>();
 
             Util.LoadDictFromFile(_lotteryDic, _lotteryFileName);
-            Log.Debug("LoadLotteryDicFromFile() dic length = " + _lotteryDic.Count.ToString());
+            Log.Debug("LoadLotteryDicFromFile() Dic length = " + _lotteryDic.Count.ToString());
         }
 
         private void SaveLotteryDicToFile()

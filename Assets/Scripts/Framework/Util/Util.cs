@@ -48,30 +48,31 @@ namespace Framework
 
         public static bool SaveToXml<T>(string filePath, T source) where T : class
         {
+            if (source == null)
+            {
+                Log.Debug("SaveToXml() failed, source is null.");
+                return false;
+            }
+
+            if (!File.Exists(filePath))
+            {
+                Log.Debug("SaveToXml() filePath is not existed, create file: " + filePath.ToString());
+                File.Create(filePath);
+            }
+
             try
             {
-                if (source == null)
+                using (StreamWriter writer = new StreamWriter(filePath))
                 {
-                    Log.Debug("SaveToXml() failed, source is null.");
-                    return false;
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                    xmlSerializer.Serialize(writer, source);
                 }
-
-                if (!File.Exists(filePath))
-                {
-                    Log.Debug("SaveToXml() filePath is not existed, create file: " + filePath.ToString());
-                    File.Create(filePath);
-                }
-
-                StreamWriter writer = new StreamWriter(filePath);
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
-                xmlSerializer.Serialize(writer, source);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.LogException(e);
-                throw;
+                Log.Debug("SaveToXml() " + ex.ToString());
+                return false;
             }
-
             return true;
         }
 
@@ -79,26 +80,25 @@ namespace Framework
         {
             result = null;
 
+            if (!File.Exists(filePath))
+            {
+                Log.Debug("LoadFromXml() failed, filePath is not existed.");
+                return false;
+            }
+
             try
             {
-                if (File.Exists(filePath))
+                using (StreamReader reader = new StreamReader(filePath))
                 {
-                    StreamReader reader = new StreamReader(filePath);
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
                     result = xmlSerializer.Deserialize(reader) as T;
                 }
-                else
-                {
-                    Debug.LogError("LoadFromXml() failed, filePath is not existed.");
-                    return false;
-                }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Debug.LogException(e);
-                throw;
+                Log.Debug("LoadFromXml() " + ex.ToString());
+                return false;
             }
-
             return true;
         }
 
@@ -111,7 +111,9 @@ namespace Framework
             {
                 using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
                 {
-                    while (true)
+                    Stream stream = reader.BaseStream;
+                    long length = stream.Length;
+                    while (stream.Position < length)
                     {
                         string msg = reader.ReadString();
                         if (msg != null)
@@ -131,6 +133,9 @@ namespace Framework
 
         public static void SaveListToFile(List<string> list, string filePath)
         {
+            if (string.IsNullOrEmpty(filePath) || list == null)
+                return;
+
             try
             {
                 using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
@@ -149,21 +154,23 @@ namespace Framework
 
         public static bool LoadDictFromFile(Dictionary<string, string> dict, string filePath)
         {
+            if (!File.Exists(filePath) || dict == null)
+                return false;
+
             try
             {
-                if (File.Exists(filePath))
+                using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
                 {
-                    using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+                    Stream stream = reader.BaseStream;
+                    long length = stream.Length;
+                    while (stream.Position < length)
                     {
-                        while (true)
-                        {
-                            string dictKey = reader.ReadString();
-                            string dictValue = reader.ReadString();
+                        string dictKey = reader.ReadString();
+                        string dictValue = reader.ReadString();
 
-                            if (dictKey != null && dictValue != null)
-                                dict[dictKey] = dictValue;
-                            else break;
-                        }
+                        if (dictKey != null && dictValue != null)
+                            dict[dictKey] = dictValue;
+                        else break;
                     }
                 }
             }
@@ -178,19 +185,21 @@ namespace Framework
 
         public static bool LoadDictFromFile(Dictionary<int, int> dict, string filePath)
         {
+            if (!File.Exists(filePath) || dict == null)
+                return false;
+
             try
             {
-                if (File.Exists(filePath))
+                using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
                 {
-                    using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+                    Stream stream = reader.BaseStream;
+                    long length = stream.Length;
+                    while (stream.Position < length)
                     {
-                        while (true)
-                        {
-                            int dictKey = reader.ReadInt32();
-                            int dictValue = reader.ReadInt32();
+                        int dictKey = reader.ReadInt32();
+                        int dictValue = reader.ReadInt32();
 
-                            dict[dictKey] = dictValue;
-                        }
+                        dict[dictKey] = dictValue;
                     }
                 }
             }
@@ -205,21 +214,23 @@ namespace Framework
 
         public static bool LoadDictFromFile(Dictionary<string, int> dict, string filePath)
         {
+            if (!File.Exists(filePath) || dict == null)
+                return false;
+
             try
             {
-                if (File.Exists(filePath))
+                using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
                 {
-                    using (BinaryReader reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
+                    Stream stream = reader.BaseStream;
+                    long length = stream.Length;
+                    while (stream.Position < length)
                     {
-                        while (true)
-                        {
-                            string dictKey = reader.ReadString();
-                            int dictValue = reader.ReadInt32();
+                        string dictKey = reader.ReadString();
+                        int dictValue = reader.ReadInt32();
 
-                            if (dictKey != null)
-                                dict[dictKey] = dictValue;
-                            else break;
-                        }
+                        if (dictKey != null)
+                            dict[dictKey] = dictValue;
+                        else break;
                     }
                 }
             }
@@ -234,6 +245,9 @@ namespace Framework
 
         public static void SaveDictToFile(Dictionary<string, string> dict, string filePath)
         {
+            if (dict == null)
+                return;
+
             try
             {
                 using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
@@ -253,6 +267,9 @@ namespace Framework
 
         public static void SaveDictToFile(Dictionary<int, int> dict, string filePath)
         {
+            if (string.IsNullOrEmpty(filePath) || dict == null)
+                return;
+
             try
             {
                 using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
@@ -273,6 +290,9 @@ namespace Framework
 
         public static void SaveDictToFile(Dictionary<string, int> dict, string filePath)
         {
+            if (string.IsNullOrEmpty(filePath) || dict == null)
+                return;
+
             try
             {
                 using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
@@ -293,6 +313,9 @@ namespace Framework
 
         public static void SaveBytesToFile(byte[] allBytes, string filePath)
         {
+            if (string.IsNullOrEmpty(filePath) || allBytes == null)
+                return;
+
             try
             {
                 using (BinaryWriter writer = new BinaryWriter(File.Open(filePath, FileMode.Create)))
@@ -308,27 +331,23 @@ namespace Framework
 
         public static byte[] LoadBytesFromFile(string filePath)
         {
-            if (File.Exists(filePath))
-            {
-                try
-                {
-                    return File.ReadAllBytes(filePath);
-                }
-                catch (Exception ex)
-                {
-                    Log.Debug("LoadBytesFromFile() " + ex.Message);
-                    return null;
-                }
-            }
+            if (!File.Exists(filePath))
+                return null;
 
-            return null;
+            try
+            {
+                return File.ReadAllBytes(filePath);
+            }
+            catch (Exception ex)
+            {
+                Log.Debug("LoadBytesFromFile() " + ex.Message);
+                return null;
+            }
         }
 
-        public static void SaveDictionaryToTxt(Dictionary<string, int> glDic, string filePath, string title = "")
+        public static void SaveDictionaryToText(Dictionary<string, int> glDic, string filePath, string title = "")
         {
-            if (string.IsNullOrEmpty(filePath)
-                || glDic == null
-                || glDic.Count == 0)
+            if (string.IsNullOrEmpty(filePath) || glDic == null)
                 return;
 
             StringBuilder sb = new StringBuilder();
