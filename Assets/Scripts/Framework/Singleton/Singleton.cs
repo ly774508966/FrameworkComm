@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System;
+using System.Reflection;
 
 namespace Framework
 {
@@ -15,12 +17,21 @@ namespace Framework
             {
                 lock (_syslock)
                 {
-                    if (_instance == null) _instance = new T();
+                    if (_instance == null)
+                    {
+                        _instance = new T();
+                    }
                 }
+
                 return _instance;
             }
         }
 
-        public Singleton() { }
+        protected Singleton() { }
+
+        protected void Dispose()
+        {
+            _instance = null;
+        }
     }
 }

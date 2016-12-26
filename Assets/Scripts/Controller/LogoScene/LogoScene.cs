@@ -7,7 +7,7 @@ namespace TikiAL
 {
     public class LogoScene : BaseSceneFadeInOut
     {
-        private bool _resInitialized = false;
+        private bool _ready = false;
 
         protected override void InitUI()
         {
@@ -28,7 +28,7 @@ namespace TikiAL
             {
                 ResourceManager.instance.LoadResourcesAsyn(PathConfig.Guest, delegate ()
                 {
-                    _resInitialized = true;
+                    _ready = true;
                 });
             });
         }
@@ -39,12 +39,12 @@ namespace TikiAL
 
             while (true)
             {
-                if (_resInitialized
-                    && GiftModel.instance.IsInitialized
-                    && GuestModel.instance.IsInitialized
-                    && LotteryModel.instance.IsInitialized)
+                if (_ready
+                    && GiftModel.instance.ready
+                    && GuestModel.instance.ready
+                    && LotteryModel.instance.ready)
                 {
-                    Log.Debug("Check() end, all Models has already initialized.");
+                    Log.Debug("Check() end -> GoToMainScene()");
                     break;
                 }
 

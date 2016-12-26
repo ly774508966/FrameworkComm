@@ -23,7 +23,7 @@ namespace TikiAL
             DirectoryInfo dir = new DirectoryInfo(folder);
             if (dir.Exists)
             {
-                Log.Debug("LoadResources() start by folder: " + folder);
+                Log.Debug("LoadResources() start from folder: " + folder);
 
                 if (resourceDic == null)
                     resourceDic = new Dictionary<string, Sprite>();
@@ -65,7 +65,7 @@ namespace TikiAL
                     }
                 }
 
-                Log.Debug("LoadResources() end by folder, length = " + length.ToString());
+                Log.Debug("LoadResources() end, length = " + length.ToString());
             }
             else
             {

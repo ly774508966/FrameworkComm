@@ -6,20 +6,22 @@ namespace Framework
 {
     public abstract class BaseModel<T> : Singleton<T> where T : class, new()
     {
-        protected bool _initOver = false;
-        public bool IsInitialized
+        protected bool _ready = false;
+        public bool ready
         {
-            get { return _initOver; }
+            get { return _ready; }
         }
 
-        public BaseModel()
+        public bool enabled = true;
+
+        protected BaseModel()
         {
             InitData();
         }
 
         protected virtual void InitData()
         {
-            _initOver = true;
+            _ready = true;
         }
     }
 }

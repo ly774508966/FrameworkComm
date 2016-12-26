@@ -50,7 +50,7 @@ namespace TikiAL
                 if (sceneList.Count > MAX_SCENECOUNT)
                     sceneList.RemoveAt(0);
 
-                Log.Debug("GotoSceneAsync() -> " + value);
+                Log.Debug("GotoSceneAsync() " + Application.loadedLevelName + " -> " + value);
 
                 AsyncOperation asyncO = Application.LoadLevelAsync(value);
                 yield return asyncO;
