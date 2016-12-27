@@ -2,9 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Framework;
 
-namespace TikiAL
+namespace Framework
 {
     public class SceneManager : MonoSingleton<SceneManager>
     {

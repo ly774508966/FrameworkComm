@@ -46,6 +46,47 @@ namespace Framework
                 renderers[i].sortingOrder = sortingOrder;
         }
 
+        public static void BringForwardInParent(GameObject parent, GameObject gameObject)
+        {
+            UIPanel[] list = parent.GetComponentsInChildren<UIPanel>();
+            int size = list.Length;
+            int iMaxDepth = int.MinValue;
+
+            if (size > 0 && gameObject != null)
+            {
+                for (int i = 0; i < size; ++i)
+                {
+                    UIPanel panel = list[i];
+                    //新添加的gameObject，不纳入计算
+                    if (panel.depth > iMaxDepth && !NGUITools.IsChild(gameObject.transform, panel.transform))
+                        iMaxDepth = panel.depth;
+                }
+
+                if (iMaxDepth > int.MinValue)
+                {
+                    UIPanel[] panels = gameObject.GetComponentsInChildren<UIPanel>(true);
+                    int iCurPanelMinDepth = int.MaxValue;
+
+                    //找出新添加的gameObject下最小的UIPanel.depth
+                    for (int i = 0; i < panels.Length; i++)
+                    {
+                        if (panels[i].depth < iCurPanelMinDepth)
+                            iCurPanelMinDepth = panels[i].depth;
+                    }
+
+                    //如果新添加的gameObject下最小的UIPanel.depth，比原有弹窗的最大depth还小的时候(被遮挡)，调整depth使其显示在最顶部
+                    if (iCurPanelMinDepth <= iMaxDepth)
+                    {
+                        for (int i = 0; i < panels.Length; ++i)
+                        {
+                            UIPanel p = panels[i];
+                            p.depth += iMaxDepth - iCurPanelMinDepth + 1;
+                        }
+                    }
+                }
+            }
+        }
+
         public static bool SaveToXml<T>(string filePath, T source) where T : class
         {
             if (source == null)

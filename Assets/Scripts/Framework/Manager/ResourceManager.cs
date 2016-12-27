@@ -3,9 +3,8 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using Framework;
 
-namespace TikiAL
+namespace Framework
 {
     public class ResourceManager : MonoSingleton<ResourceManager>
     {

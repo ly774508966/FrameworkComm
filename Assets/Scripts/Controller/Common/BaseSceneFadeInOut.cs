@@ -38,29 +38,7 @@ namespace TikiAL
             panel.depth = GameConfig.MaxDepth;
             panel.sortingOrder = GameConfig.MaxSortingOrder;
 
-            //Create Mask GameObject
-            GameObject maskGo = NGUITools.AddChild(maskPanel, true);
-            maskGo.name = "Mask";
-
-            //Create UI2DSprite
-            UI2DSprite tx = maskGo.AddComponent<UI2DSprite>();
-            Texture2D texture = new Texture2D(1, 1);
-            texture.SetPixel(0, 0, Color.black);
-            texture.Apply();
-            tx.sprite2D = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
-            tx.type = UIBasicSprite.Type.Sliced;
-            tx.alpha = 0.0f;
-            UIWidget widget = tx;
-
-            //Create BoxCollider and Widget Size
-            BoxCollider box = maskGo.AddComponent<BoxCollider>();
-            box.isTrigger = true;
-            widget.autoResizeBoxCollider = true;
-            Vector2 size = Util.GetCurrentScreenSize();
-            widget.width = (int)size.x;
-            widget.height = (int)size.y;
-
-            return maskGo;
+            return PopupManager.instance.CreateMask(maskPanel, 0.0f, "Mask");
         }
 
         private void TweenMask(float from, float to, Callback.FunVoid fCallback, float time = 1.0f)

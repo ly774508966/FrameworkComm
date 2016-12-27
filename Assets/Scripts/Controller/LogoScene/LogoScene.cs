@@ -19,6 +19,8 @@ namespace TikiAL
         {
             base.InitUI();
 
+            InstantiateManagers();
+
             restartBtn.onClick = OnClickRestart;
             continueBtn.onClick = OnClickContinue;
             quitBtn.onClick = OnClickQuit;
@@ -55,6 +57,11 @@ namespace TikiAL
             DebugSystemInfo();
             StartLoadRes();
             StartCoroutine(CheckReady());
+        }
+
+        private void InstantiateManagers()
+        {
+            GameManager.instance.enabled = true;
         }
 
         private void StartLoadRes()
