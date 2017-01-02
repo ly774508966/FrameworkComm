@@ -1,2 +1,2 @@
-# TikiAL
-TiKiAnnualLottery by Unity5.2.5f1 on PC platform.
+# FrameworkComm
+C# FrameworkComm by Unity5.2.5f1.
