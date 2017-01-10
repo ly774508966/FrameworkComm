@@ -2,7 +2,7 @@
 
 namespace Framework
 {
-    public class Callback
+    public class FCallback
     {
         public delegate void FunVoid();
         public delegate void FunObject(object obj);

@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Framework
 {
-    public class PopupManager : Singleton<PopupManager>
+    public class PopupManager : FSingleton<PopupManager>
     {
         private const float MASK_ALPHA = 0.3f;
         private const string LAYER_NAME = "PopupLayer";
@@ -27,7 +27,7 @@ namespace Framework
                 T ret = popup.GetComponent<T>();
                 if (ret == null)
                 {
-                    Log.Debug("Can't Find Type: " + typeof(T).ToString());
+                    FLog.Debug("Can't Find Type: " + typeof(T).ToString());
                     RemovePopUp(popup);
                 }
                 else
@@ -110,7 +110,7 @@ namespace Framework
             }
 
             AdjustPanelSortingOrderAndDepth(layer, panel);
-            if (isBringForward) Util.BringForwardInParent(layer, panel);
+            if (isBringForward) FUtil.BringForwardInParent(layer, panel);
 
             return popUp;
         }
@@ -239,7 +239,7 @@ namespace Framework
             box.isTrigger = true;
             widget.depth = -1;
             widget.autoResizeBoxCollider = true;
-            Vector2 size = Util.GetCurrentScreenSize();
+            Vector2 size = FUtil.GetCurrentScreenSize();
             widget.width = (int)size.x;
             widget.height = (int)size.y;
 
@@ -248,7 +248,7 @@ namespace Framework
 
         private GameObject GetPopUpLayer(bool isNullCreate = false)
         {
-            GameObject root = Util.GetRoot();
+            GameObject root = FUtil.GetRoot();
             if (root != null)
             {
                 Transform layer = root.transform.Find(LAYER_NAME);

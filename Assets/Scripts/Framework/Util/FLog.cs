@@ -10,7 +10,7 @@ namespace Framework
     /// <summary>
     /// 日志系统
     /// </summary>
-    public class Log
+    public class FLog
     {
         private static bool bStackTrack = true;
 

@@ -1,36 +1,28 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
-namespace TikiAL
+namespace Project
 {
-    [XmlRoot("GiftRoot", Namespace = "TikiAL", IsNullable = true)]
-    public class GiftInfo
+    [XmlRoot("InfoRoot", Namespace = "Project", IsNullable = true)]
+    public class Info
     {
-        public GiftInfo() { }
+        public Info() { }
 
         [XmlArray("GiftList")]
-        public Gift[] gifts { set; get; }
+        public Item[] items { set; get; }
     }
 
-    public class Gift
+    public class Item
     {
-        public Gift() { }
-        public Gift(int id, string level, string name, string picture, int count, int price)
+        public Item() { }
+        public Item(int id, string name, string picture)
         {
             this.id = id;
-            this.level = level;
             this.name = name;
             this.picture = picture;
-            this.count = count;
-            this.price = price;
         }
 
         public int id { set; get; }
-        public string level { set; get; }
         public string name { set; get; }
         public string picture { set; get; }
-        public int count { set; get; }
-        public int price { set; get; }
     }
 }

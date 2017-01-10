@@ -5,7 +5,7 @@ namespace Framework
     /// <summary>
     /// MonoBehaviour单例基类
     /// </summary>
-    public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
+    public abstract class FMonoSingleton<T> : MonoBehaviour where T : FMonoSingleton<T>
     {
         protected static T _instance = null;
         public static T instance

@@ -1,10 +1,8 @@
-﻿using UnityEngine;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Framework
 {
-    public abstract class BaseModel<T> : Singleton<T> where T : class, new()
+    public abstract class FBaseModel<T> : FSingleton<T> where T : class, new()
     {
         protected bool _ready = false;
         public bool ready
@@ -14,7 +12,7 @@ namespace Framework
 
         public bool enabled = true;
 
-        protected BaseModel()
+        protected FBaseModel()
         {
             InitData();
         }

@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace Framework
 {
-    public class SceneManager : MonoSingleton<SceneManager>
+    public class SceneManager : FMonoSingleton<SceneManager>
     {
         private List<string> sceneList = new List<string>();
         private int MAX_SCENECOUNT = 3;
 
-        public void GotoScene(string value, Callback.FunVoid fCallback = null)
+        public void GotoScene(string value, FCallback.FunVoid fCallback = null)
         {
             StartCoroutine(GotoSceneAsync(value, fCallback));
         }
@@ -23,23 +23,23 @@ namespace Framework
                 sceneList.RemoveAt(sceneList.Count - 1);
                 if (scene == SceneName.LogoScene)
                 {
-                    Log.Debug("Application.Quit()");
+                    FLog.Debug("Application.Quit()");
                     Application.Quit();
                 }
                 else
                 {
-                    Log.Debug("BacktoScene() -> " + scene);
+                    FLog.Debug("BacktoScene() -> " + scene);
                     Application.LoadLevel(scene);
                 }
             }
             else
             {
-                Log.Debug("Application.Quit()");
+                FLog.Debug("Application.Quit()");
                 Application.Quit();
             }
         }
 
-        private IEnumerator GotoSceneAsync(string value, Callback.FunVoid fCallback)
+        private IEnumerator GotoSceneAsync(string value, FCallback.FunVoid fCallback)
         {
             yield return null;
 
@@ -49,7 +49,7 @@ namespace Framework
                 if (sceneList.Count > MAX_SCENECOUNT)
                     sceneList.RemoveAt(0);
 
-                Log.Debug("GotoSceneAsync() " + Application.loadedLevelName + " -> " + value);
+                FLog.Debug("GotoSceneAsync() " + Application.loadedLevelName + " -> " + value);
 
                 AsyncOperation asyncO = Application.LoadLevelAsync(value);
                 yield return asyncO;

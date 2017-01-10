@@ -3,9 +3,9 @@
 namespace Framework
 {
     /// <summary>
-    /// UI组件基类，提供延时刷新功能
+    /// UI组件基类，延时刷新
     /// </summary>
-    public class BaseController : MonoBehaviour
+    public class FBaseController : MonoBehaviour
     {
         protected bool isWaitToUpdate = false;
 

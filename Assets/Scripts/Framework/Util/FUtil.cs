@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Framework
 {
-    public class Util
+    public class FUtil
     {
         public static GameObject GetRoot()
         {
@@ -91,13 +91,13 @@ namespace Framework
         {
             if (source == null)
             {
-                Log.Debug("SaveToXml() failed, source is null.");
+                FLog.Debug("SaveToXml() failed, source is null.");
                 return false;
             }
 
             if (!File.Exists(filePath))
             {
-                Log.Debug("SaveToXml() filePath is not existed, create file: " + filePath.ToString());
+                FLog.Debug("SaveToXml() filePath is not existed, create file: " + filePath.ToString());
                 File.Create(filePath);
             }
 
@@ -111,7 +111,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("SaveToXml() " + ex.ToString());
+                FLog.Debug("SaveToXml() " + ex.ToString());
                 return false;
             }
             return true;
@@ -123,7 +123,7 @@ namespace Framework
 
             if (!File.Exists(filePath))
             {
-                Log.Debug("LoadFromXml() failed, filePath is not existed.");
+                FLog.Debug("LoadFromXml() failed, filePath is not existed.");
                 return false;
             }
 
@@ -137,7 +137,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("LoadFromXml() " + ex.ToString());
+                FLog.Debug("LoadFromXml() " + ex.ToString());
                 return false;
             }
             return true;
@@ -165,7 +165,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("LoadListFromFile() " + ex.Message);
+                FLog.Debug("LoadListFromFile() " + ex.Message);
                 return false;
             }
 
@@ -189,7 +189,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("SaveListToFile() " + ex.Message);
+                FLog.Debug("SaveListToFile() " + ex.Message);
             }
         }
 
@@ -217,7 +217,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("LoadDictFromFile() " + ex.Message);
+                FLog.Debug("LoadDictFromFile() " + ex.Message);
                 return false;
             }
 
@@ -246,7 +246,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("LoadDictFromFile() " + ex.Message);
+                FLog.Debug("LoadDictFromFile() " + ex.Message);
                 return false;
             }
 
@@ -277,7 +277,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("LoadDictFromFile() " + ex.Message);
+                FLog.Debug("LoadDictFromFile() " + ex.Message);
                 return false;
             }
 
@@ -302,7 +302,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("SaveDictToFile() " + ex.Message);
+                FLog.Debug("SaveDictToFile() " + ex.Message);
             }
         }
 
@@ -325,7 +325,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("SaveDictToFile() " + ex.Message);
+                FLog.Debug("SaveDictToFile() " + ex.Message);
             }
         }
 
@@ -348,7 +348,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("SaveDictToFile() " + ex.Message);
+                FLog.Debug("SaveDictToFile() " + ex.Message);
             }
         }
 
@@ -366,7 +366,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("SaveBytesToFile() " + ex.Message);
+                FLog.Debug("SaveBytesToFile() " + ex.Message);
             }
         }
 
@@ -381,7 +381,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("LoadBytesFromFile() " + ex.Message);
+                FLog.Debug("LoadBytesFromFile() " + ex.Message);
                 return null;
             }
         }
@@ -409,7 +409,7 @@ namespace Framework
             }
             catch (Exception ex)
             {
-                Log.Debug("SaveDictionaryToTxt() " + ex.Message);
+                FLog.Debug("SaveDictionaryToTxt() " + ex.Message);
             }
         }
 

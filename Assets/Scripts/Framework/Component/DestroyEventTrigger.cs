@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 namespace Framework
 {
@@ -19,7 +18,7 @@ namespace Framework
         {
             if (!GameManager.instance.IsAppQuit())
             {
-                Log.Debug("DestroyEventTrigger -> OnDestroy()");
+                FLog.Debug("DestroyEventTrigger -> OnDestroy()");
                 if (onDestroy != null)
                     onDestroy(gameObject);
             }

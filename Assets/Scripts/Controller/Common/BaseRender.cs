@@ -1,9 +1,8 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Framework;
 
-namespace Framework
+namespace Project
 {
-    public abstract class BaseRender : BaseController
+    public abstract class BaseRender : FBaseController
     {
         private object _data = null;
         public object data

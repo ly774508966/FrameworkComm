@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Framework;
 
-namespace TikiAL
+namespace Project
 {
     public class BaseSceneFadeInOut : BaseSceneEaseInOut
     {
@@ -16,19 +15,19 @@ namespace TikiAL
             _maskGo = CreateMask();
         }
 
-        protected override void SceneEaseIn(Callback.FunVoid fCallback)
+        protected override void SceneEaseIn(FCallback.FunVoid fCallback)
         {
             TweenMask(_alphaDark, _alphaLight, fCallback);
         }
 
-        protected override void SceneEaseOut(Callback.FunVoid fCallback)
+        protected override void SceneEaseOut(FCallback.FunVoid fCallback)
         {
             TweenMask(_alphaLight, _alphaDark, fCallback);
         }
 
         private GameObject CreateMask()
         {
-            GameObject root = Util.GetRoot();
+            GameObject root = FUtil.GetRoot();
             if (root == null) return null;
 
             //Create Panel
@@ -41,7 +40,7 @@ namespace TikiAL
             return PopupManager.instance.CreateMask(maskPanel, 0.0f, "Mask");
         }
 
-        private void TweenMask(float from, float to, Callback.FunVoid fCallback, float time = 1.0f)
+        private void TweenMask(float from, float to, FCallback.FunVoid fCallback, float time = 1.0f)
         {
             if (_maskGo == null)
             {
@@ -68,13 +67,13 @@ namespace TikiAL
                 "delay", .1f,
                 "time", time,
                 "easetype", iTween.EaseType.linear,
-                "onupdate", Callback.CreateAction(delegate (object x)
+                "onupdate", FCallback.CreateAction(delegate (object x)
                 {
                     float value = Mathf.Clamp01((float)x);
                     widget.alpha = value;
                 }),
                 "onupdatetarget", gameObject,
-                "oncomplete", Callback.CreateAction(delegate ()
+                "oncomplete", FCallback.CreateAction(delegate ()
                 {
                     if (box != null) box.enabled = false;
                     fCallback();

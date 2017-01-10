@@ -3,7 +3,7 @@ using System.Collections;
 using System.Text;
 using Framework;
 
-namespace TikiAL
+namespace Project
 {
     public class LogoScene : BaseSceneFadeInOut
     {
@@ -30,13 +30,11 @@ namespace TikiAL
 
         private void OnClickRestart(GameObject go)
         {
-            LotteryModel.instance.ResetLottery();
             GotoScene(SceneName.MainScene);
         }
 
         private void OnClickContinue(GameObject go)
         {
-            LotteryModel.instance.SetLotteryFromHistory();
             GotoScene(SceneName.MainScene);
         }
 
@@ -55,7 +53,6 @@ namespace TikiAL
         {
             base.OnSceneEaseInFinish();
             DebugSystemInfo();
-            StartLoadRes();
             StartCoroutine(CheckReady());
         }
 
@@ -64,33 +61,21 @@ namespace TikiAL
             GameManager.instance.enabled = true;
         }
 
-        private void StartLoadRes()
-        {
-            ResourceManager.instance.LoadResourcesAsyn(PathConfig.Gift, delegate ()
-            {
-                ResourceManager.instance.LoadResourcesAsyn(PathConfig.Guest, delegate ()
-                {
-                    _ready = true;
-                });
-            });
-        }
-
         private IEnumerator CheckReady()
         {
-            Log.Debug("Check() start.");
+            FLog.Debug("Check() start.");
 
             while (true)
             {
-                if (_ready
-                    && GiftModel.instance.ready
-                    && GuestModel.instance.ready
-                    && LotteryModel.instance.ready)
+                if (_ready)
                 {
-                    Log.Debug("Check() end, game is ready.");
+                    FLog.Debug("Check() end, game is ready.");
                     break;
                 }
 
                 yield return new WaitForSeconds(1.0f);
+
+                _ready = true;
             }
 
             yield return new WaitForSeconds(2.0f);
@@ -139,7 +124,7 @@ namespace TikiAL
             sb.AppendLine("SystemMemorySize: " + SystemInfo.systemMemorySize.ToString());
             sb.AppendLine("-------------------------SystemInfo-------------------------");
 
-            Log.Debug(sb.ToString());
+            FLog.Debug(sb.ToString());
         }
         #endregion
     }

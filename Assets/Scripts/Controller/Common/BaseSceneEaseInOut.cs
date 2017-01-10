@@ -1,8 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
-using Framework;
+﻿using Framework;
 
-namespace TikiAL
+namespace Project
 {
     public class BaseSceneEaseInOut : BaseScene
     {
@@ -15,14 +13,14 @@ namespace TikiAL
             });
         }
 
-        protected virtual void SceneEaseIn(Callback.FunVoid fCallback)
+        protected virtual void SceneEaseIn(FCallback.FunVoid fCallback)
         {
             fCallback();
         }
 
         protected virtual void OnSceneEaseInFinish() { }
 
-        protected virtual void SceneEaseOut(Callback.FunVoid fCallback)
+        protected virtual void SceneEaseOut(FCallback.FunVoid fCallback)
         {
             fCallback();
         }

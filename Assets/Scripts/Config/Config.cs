@@ -34,28 +34,6 @@ public class PathConfig
             return path;
         }
     }
-
-    public static string Gift
-    {
-        get
-        {
-            string path = Root + "Gift/";
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            return path;
-        }
-    }
-
-    public static string Guest
-    {
-        get
-        {
-            string path = Root + "Guest/";
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            return path;
-        }
-    }
 }
 
 public class SceneName

@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
-namespace TikiAL
+namespace Project
 {
     public class MainScene : BaseSceneFadeInOut
     {

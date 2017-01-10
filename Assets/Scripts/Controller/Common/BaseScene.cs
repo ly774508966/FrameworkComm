@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
-using System.Collections;
 using Framework;
 
-namespace TikiAL
+namespace Project
 {
-    public class BaseScene : BaseController, KeyEventInterface
+    public class BaseScene : FBaseController, FKeyEventInterface
     {
         protected override void Update()
         {
@@ -25,7 +24,7 @@ namespace TikiAL
 
         public virtual void OnKeyBackRelease()
         {
-            Log.Debug("OnKeyBackRelease() -> BackToLastScene()");
+            FLog.Debug("OnKeyBackRelease() -> BackToLastScene()");
             BackToLastScene();
         }
     }

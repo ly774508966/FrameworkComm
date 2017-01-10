@@ -1,15 +1,14 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
 
 namespace Framework
 {
-    public class GameManager : MonoSingleton<GameManager>
+    public class GameManager : FMonoSingleton<GameManager>
     {
         private bool isAppQuit = false;
 
         void OnApplicationQuit()
         {
-            Log.Debug("OnApplicationQuit()");
+            FLog.Debug("OnApplicationQuit()");
             isAppQuit = true;
         }
 

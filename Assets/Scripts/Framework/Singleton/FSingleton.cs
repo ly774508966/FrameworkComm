@@ -7,7 +7,7 @@ namespace Framework
     /// <summary>
     /// 单例基类
     /// </summary>
-    public abstract class Singleton<T> where T : class, new()
+    public abstract class FSingleton<T> where T : class, new()
     {
         protected static T _instance = null;
         private static readonly object _syslock = new object();
@@ -27,7 +27,7 @@ namespace Framework
             }
         }
 
-        protected Singleton() { }
+        protected FSingleton() { }
 
         protected void Dispose()
         {

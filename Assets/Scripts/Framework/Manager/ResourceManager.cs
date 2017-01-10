@@ -6,23 +6,23 @@ using System.Collections.Generic;
 
 namespace Framework
 {
-    public class ResourceManager : MonoSingleton<ResourceManager>
+    public class ResourceManager : FMonoSingleton<ResourceManager>
     {
         private Dictionary<string, Sprite> resourceDic;
 
-        public void LoadResourcesAsyn(string folder, Callback.FunVoid fCallback = null)
+        public void LoadResourcesAsyn(string folder, FCallback.FunVoid fCallback = null)
         {
             StartCoroutine(LoadResources(folder, fCallback));
         }
 
-        private IEnumerator LoadResources(string folder, Callback.FunVoid fCallback)
+        private IEnumerator LoadResources(string folder, FCallback.FunVoid fCallback)
         {
             yield return null;
 
             DirectoryInfo dir = new DirectoryInfo(folder);
             if (dir.Exists)
             {
-                Log.Debug("LoadResources() start from folder: " + folder);
+                FLog.Debug("LoadResources() start from folder: " + folder);
 
                 if (resourceDic == null)
                     resourceDic = new Dictionary<string, Sprite>();
@@ -50,25 +50,25 @@ namespace Framework
                                 if (!resourceDic.ContainsKey(name))
                                     resourceDic.Add(name, sprite);
 
-                                Log.Debug("Load file: " + name + ", succeed.");
+                                FLog.Debug("Load file: " + name + ", succeed.");
                             }
                             else
                             {
-                                Log.Debug("Load file: " + name + ", sprite create failed.");
+                                FLog.Debug("Load file: " + name + ", sprite create failed.");
                             }
                         }
                         else
                         {
-                            Log.Debug("Load file: " + name + ", www.texture is null.");
+                            FLog.Debug("Load file: " + name + ", www.texture is null.");
                         }
                     }
                 }
 
-                Log.Debug("LoadResources() end, length = " + length.ToString());
+                FLog.Debug("LoadResources() end, length = " + length.ToString());
             }
             else
             {
-                Log.Debug("LoadResources() error, directory is not exist.");
+                FLog.Debug("LoadResources() error, directory is not exist.");
             }
 
             if (fCallback != null)
