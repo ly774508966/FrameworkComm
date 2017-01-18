@@ -38,8 +38,7 @@ public class PathConfig
 
 public class SceneName
 {
-    public static readonly string LogoScene = "LogoScene";
-    public static readonly string MainScene = "MainScene";
+    public static readonly string LoadScene = "LoadScene";
 }
 
 public class GameConfig

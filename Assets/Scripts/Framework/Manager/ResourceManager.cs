@@ -35,13 +35,16 @@ namespace Framework
                     length = fInfo.Length;
                     for (int i = 0; i < length; i++)
                     {
-                        string name = fInfo[i].Name.Trim(fInfo[i].Extension.ToCharArray());
+                        string name = fInfo[i].Name;
                         string fullname = fInfo[i].FullName;
 
                         WWW www = new WWW("file://" + fullname);
                         yield return www;
 
                         Texture2D texture = www.texture;
+                        //texture = FTextureScaler.scaled(texture, 220, 220, FilterMode.Bilinear);
+                        //FUtil.SaveToJpg(texture, "./User/" + name);
+
                         if (texture != null)
                         {
                             Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);

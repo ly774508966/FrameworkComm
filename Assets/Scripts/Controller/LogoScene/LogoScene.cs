@@ -7,53 +7,19 @@ namespace Project
 {
     public class LogoScene : BaseSceneFadeInOut
     {
-        public GameObject buttonGo;
-        public UIEventListener restartBtn;
-        public UIEventListener continueBtn;
-        public UIEventListener quitBtn;
-        public GameObject loadingGo;
-
         private bool _ready = false;
 
         protected override void InitUI()
         {
             base.InitUI();
-
             InstantiateManagers();
-
-            restartBtn.onClick = OnClickRestart;
-            continueBtn.onClick = OnClickContinue;
-            quitBtn.onClick = OnClickQuit;
-
-            SwitchButton();
-        }
-
-        private void OnClickRestart(GameObject go)
-        {
-            GotoScene(SceneName.MainScene);
-        }
-
-        private void OnClickContinue(GameObject go)
-        {
-            GotoScene(SceneName.MainScene);
-        }
-
-        private void OnClickQuit(GameObject go)
-        {
-            BackToLastScene();
-        }
-
-        private void SwitchButton()
-        {
-            buttonGo.SetActive(_ready);
-            loadingGo.SetActive(!_ready);
         }
 
         protected override void OnSceneEaseInFinish()
         {
             base.OnSceneEaseInFinish();
             DebugSystemInfo();
-            StartCoroutine(CheckReady());
+            StartCoroutine(Check());
         }
 
         private void InstantiateManagers()
@@ -61,7 +27,7 @@ namespace Project
             GameManager.instance.enabled = true;
         }
 
-        private IEnumerator CheckReady()
+        private IEnumerator Check()
         {
             FLog.Debug("Check() start.");
 
@@ -73,14 +39,14 @@ namespace Project
                     break;
                 }
 
-                yield return new WaitForSeconds(1.0f);
-
                 _ready = true;
+
+                yield return new WaitForSeconds(1.0f);
             }
 
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForEndOfFrame();
 
-            SwitchButton();
+            //GotoScene(SceneName.MainScene);
         }
 
         #region DebugSystemInfo

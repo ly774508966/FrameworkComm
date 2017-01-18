@@ -87,6 +87,23 @@ namespace Framework
             }
         }
 
+        public static void SaveToJpg(Texture2D texture, string filePath, bool destroyTexture = false)
+        {
+            if (texture == null)
+            {
+                FLog.Debug("SaveToJpg() failed, texture is null.");
+                return;
+            }
+
+            byte[] png = texture.EncodeToJPG();
+            SaveBytesToFile(png, filePath);
+            if (destroyTexture)
+                Texture2D.DestroyImmediate(texture);
+            png = null;
+
+            FLog.Debug("SaveToJpg() succeed.");
+        }
+
         public static bool SaveToXml<T>(string filePath, T source) where T : class
         {
             if (source == null)
@@ -395,7 +412,7 @@ namespace Framework
             sb.AppendLine(title + "\n");
             foreach (KeyValuePair<string, int> kvp in glDic)
             {
-                sb.AppendLine(kvp.Value.ToString() + ", " + kvp.Key);
+                sb.AppendLine(kvp.Value.ToString() + ", " + kvp.Key.Substring(0, kvp.Key.LastIndexOf('.')));
             }
             sb.AppendLine("\nLength = " + glDic.Count.ToString());
             sb.AppendLine(DateTime.Now.ToString("yy-MM-dd HH:mm:ss"));
@@ -411,6 +428,24 @@ namespace Framework
             {
                 FLog.Debug("SaveDictionaryToTxt() " + ex.Message);
             }
+        }
+
+        public static void SetTimeout(GameObject timeObject, FCallback.FunVoid fCallback, float time, string name = "")
+        {
+            iTween.ValueTo(timeObject, iTween.Hash(
+                "name", "SetTimeout_" + name,
+                "time", time, "from", 0, "to", 1,
+                "onupdate", FCallback.CreateAction(delegate () { }),
+                "oncomplete", FCallback.CreateAction(delegate ()
+                {
+                    if (fCallback != null) fCallback();
+                })
+            ));
+        }
+
+        public static void ClearTimeout(GameObject timeObject, string name = "")
+        {
+            iTween.StopByName(timeObject, "SetTimeout_" + name);
         }
 
         /// <summary>
@@ -431,7 +466,7 @@ namespace Framework
 
             for (int r = 0; r < num; r++)
             {
-                int index = random.Next(0, num - r);
+                int index = random.Next(0, max - r);
                 result[r] = seed[index];
                 seed[index] = seed[num - r - 1];
             }

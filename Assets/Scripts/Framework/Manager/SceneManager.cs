@@ -21,10 +21,9 @@ namespace Framework
             {
                 string scene = sceneList[sceneList.Count - 1];
                 sceneList.RemoveAt(sceneList.Count - 1);
-                if (scene == SceneName.LogoScene)
+                if (scene == SceneName.LoadScene)
                 {
-                    FLog.Debug("Application.Quit()");
-                    Application.Quit();
+                    Quit();
                 }
                 else
                 {
@@ -34,8 +33,7 @@ namespace Framework
             }
             else
             {
-                FLog.Debug("Application.Quit()");
-                Application.Quit();
+                Quit();
             }
         }
 
@@ -56,6 +54,16 @@ namespace Framework
 
                 if (fCallback != null) { fCallback(); }
             }
+        }
+
+        private void Quit()
+        {
+            FLog.Debug("Application.Quit()");
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+		    Application.Quit();
+#endif
         }
     }
 }

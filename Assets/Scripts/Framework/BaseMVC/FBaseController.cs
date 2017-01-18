@@ -25,6 +25,11 @@ namespace Framework
             InitData();
         }
 
+        protected virtual void OnEnable()
+        {
+            InvalidView();
+        }
+
         protected virtual void Start()
         {
             InitUI();

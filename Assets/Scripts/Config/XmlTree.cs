@@ -2,12 +2,12 @@
 
 namespace Project
 {
-    [XmlRoot("InfoRoot", Namespace = "Project", IsNullable = true)]
+    [XmlRoot("Root", Namespace = "FrameworkComm", IsNullable = true)]
     public class Info
     {
         public Info() { }
 
-        [XmlArray("GiftList")]
+        [XmlArray("ItemArray")]
         public Item[] items { set; get; }
     }
 
