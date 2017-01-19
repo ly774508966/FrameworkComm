@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace Framework
+﻿namespace Framework
 {
     public interface FKeyEventInterface
     {

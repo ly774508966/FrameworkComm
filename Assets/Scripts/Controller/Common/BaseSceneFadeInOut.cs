@@ -3,7 +3,7 @@ using Framework;
 
 namespace Project
 {
-    public class BaseSceneFadeInOut : BaseSceneEaseInOut
+    public class BaseSceneFadeInOut : FBaseSceneEaseInOut
     {
         private GameObject _maskGo;
         private float _alphaLight = 0.1f;

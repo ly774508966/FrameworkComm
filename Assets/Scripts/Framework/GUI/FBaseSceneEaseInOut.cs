@@ -1,8 +1,6 @@
-﻿using Framework;
-
-namespace Project
+﻿namespace Framework
 {
-    public class BaseSceneEaseInOut : BaseScene
+    public class FBaseSceneEaseInOut : FBaseScene
     {
         protected override void Start()
         {

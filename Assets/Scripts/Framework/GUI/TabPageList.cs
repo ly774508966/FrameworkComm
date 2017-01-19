@@ -351,24 +351,18 @@ namespace Framework
 
         void ClearData()
         {
-            data = null;
+            _data = null;
             if (_tabCache != null)
-            {
                 _tabCache.Clear();
-                _tabCache = null;
-            }
             if (_pageCache != null)
-            {
                 _pageCache.Clear();
-                _pageCache = null;
-            }
         }
 
         protected override void OnDestroy()
         {
-            base.OnDestroy();
             ClearData();
             FUtil.ClearTimeout(gameObject, "GoToTab");
+            base.OnDestroy();
         }
     }
 }

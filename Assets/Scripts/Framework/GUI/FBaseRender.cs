@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-namespace Framework
+﻿namespace Framework
 {
     /// <summary>
     /// 所有 List Render 的基类

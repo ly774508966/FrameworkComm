@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Framework
+﻿namespace Framework
 {
     public class GameManager : FMonoSingleton<GameManager>
     {

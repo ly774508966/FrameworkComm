@@ -40,8 +40,11 @@ namespace Framework
             for (int i = 0; i < cameras.Length; i++)
             {
                 Camera camera = cameras[i];
-                camera.targetTexture = rt;
-                camera.Render();
+                if (camera != null)
+                {
+                    camera.targetTexture = rt;
+                    camera.Render();
+                }
             }
             // 激活这个rt, 并从中中读取像素
             RenderTexture.active = rt;

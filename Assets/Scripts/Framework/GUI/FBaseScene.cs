@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using Framework;
 
-namespace Project
+namespace Framework
 {
-    public class BaseScene : FBaseController, FKeyEventInterface
+    public class FBaseScene : FBaseController, FKeyEventInterface
     {
         protected override void Update()
         {

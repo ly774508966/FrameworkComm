@@ -403,18 +403,18 @@ namespace Framework
             }
         }
 
-        public static void SaveDictionaryToText(Dictionary<string, int> glDic, string filePath, string title = "")
+        public static void SaveDictToTxt(Dictionary<string, int> dic, string filePath, string title = "")
         {
-            if (string.IsNullOrEmpty(filePath) || glDic == null)
+            if (string.IsNullOrEmpty(filePath) || dic == null)
                 return;
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(title + "\n");
-            foreach (KeyValuePair<string, int> kvp in glDic)
+            foreach (KeyValuePair<string, int> kvp in dic)
             {
                 sb.AppendLine(kvp.Value.ToString() + ", " + kvp.Key.Substring(0, kvp.Key.LastIndexOf('.')));
             }
-            sb.AppendLine("\nLength = " + glDic.Count.ToString());
+            sb.AppendLine("\nLength = " + dic.Count.ToString());
             sb.AppendLine(DateTime.Now.ToString("yy-MM-dd HH:mm:ss"));
 
             try

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 
 namespace Framework
 {
@@ -77,18 +76,15 @@ namespace Framework
 
         void ClearData()
         {
-            data = null;
+            _data = null;
             if (_toggleCache != null)
-            {
                 _toggleCache.Clear();
-                _toggleCache = null;
-            }
         }
 
         protected override void OnDestroy()
         {
-            base.OnDestroy();
             ClearData();
+            base.OnDestroy();
         }
     }
 }

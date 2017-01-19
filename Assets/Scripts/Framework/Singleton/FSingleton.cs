@@ -1,8 +1,4 @@
-﻿using UnityEngine;
-using System;
-using System.Reflection;
-
-namespace Framework
+﻿namespace Framework
 {
     /// <summary>
     /// 单例基类

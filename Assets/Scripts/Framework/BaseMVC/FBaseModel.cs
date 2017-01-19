@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Framework
+﻿namespace Framework
 {
     public abstract class FBaseModel<T> : FSingleton<T> where T : class, new()
     {
