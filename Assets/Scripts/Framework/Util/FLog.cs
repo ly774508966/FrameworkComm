@@ -12,20 +12,20 @@ namespace Framework
     /// </summary>
     public class FLog
     {
-        private static bool bStackTrack = true;
+        private static bool _bStackTrack = true;
 
-        private static int mMaxLogFrameCount = 3;
+        private static int _maxLogFrameCount = 3;
 
-        private static int mMaxLogFileSize = 5 * 1024 * 1024;
+        private static int _maxLogFileSize = 5 * 1024 * 1024;
 
-        private static StringBuilder sStackSB = new StringBuilder();
+        private static StringBuilder _stackSB = new StringBuilder();
 
-        private static object writeLock = new object();
+        private static object _writeLock = new object();
 
         public static int maxLogFrameCount
         {
-            get { return mMaxLogFrameCount; }
-            set { mMaxLogFrameCount = value; }
+            get { return _maxLogFrameCount; }
+            set { _maxLogFrameCount = value; }
         }
 
         //默认保留最好60K的日志
@@ -37,7 +37,7 @@ namespace Framework
         {
             get
             {
-                string path = PathConfig.Debug + "TikiAL.log";
+                string path = PathConfig.Debug + "debug.log";
                 return path;
             }
         }
@@ -74,45 +74,50 @@ namespace Framework
 
         private static void PrintLine(LogType logType, string str)
         {
-            //http://bobondevelopment.com/2007/06/11/three-ways-to-clear-a-stringbuilder/
-            sStackSB.Length = 0;
+            string sLogLine = "";
 
-            if (bStackTrack)
+            lock (_stackSB)
             {
-                StackTrace st = new StackTrace(true);
+                //http://bobondevelopment.com/2007/06/11/three-ways-to-clear-a-stringbuilder/
+                _stackSB.Length = 0;
 
-                int frameIndex = 2;
-                for (int printIndex = 0; printIndex < mMaxLogFrameCount && frameIndex < st.FrameCount - 1; printIndex++, frameIndex++)
+                if (_bStackTrack)
                 {
-                    StackFrame sf = st.GetFrame(frameIndex);
-                    string sFileName = sf.GetFileName();
-                    if (sFileName != null)
-                    {
-                        string[] sFileNameArr = sFileName.Split(new char[2] { '\\', '/' });
-                        if (sFileNameArr.Length > 0)
-                        {
-                            sFileName = sFileNameArr[sFileNameArr.Length - 1];
-                        }
-                    }
-                    var mb = sf.GetMethod();
-                    sStackSB.Append(string.Concat(
-                        printIndex > 0 ? "<-" : "",
-                        sFileName, ":",
-                        sf.GetFileLineNumber(),
-                        ",",
-                        mb != null ? mb.ToString() : "unknow"
-                    ));
-                }
-            }
+                    StackTrace st = new StackTrace(true);
 
-            string sLogLine = string.Concat(
-                (logType == LogType.Log ? "" : (logType.ToString() + " ")),
-                DateTime.Now.ToString("yy-MM-dd HH:mm:ss.fff"),
-                " (", Thread.CurrentThread.ManagedThreadId, ")",
-                " [", sStackSB, "] ",
-                str,
-                "\n"
-            );
+                    int frameIndex = 2;
+                    for (int printIndex = 0; printIndex < _maxLogFrameCount && frameIndex < st.FrameCount - 1; printIndex++, frameIndex++)
+                    {
+                        StackFrame sf = st.GetFrame(frameIndex);
+                        string sFileName = sf.GetFileName();
+                        if (!string.IsNullOrEmpty(sFileName))
+                        {
+                            string[] sFileNameArr = sFileName.Split(new char[2] { '\\', '/' });
+                            if (sFileNameArr.Length > 0)
+                            {
+                                sFileName = sFileNameArr[sFileNameArr.Length - 1];
+                            }
+                        }
+                        var mb = sf.GetMethod();
+                        _stackSB.Append(string.Concat(
+                            printIndex > 0 ? "<-" : "",
+                            sFileName, ":",
+                            sf.GetFileLineNumber(),
+                            ",",
+                            mb != null ? mb.ToString() : "unknow"
+                        ));
+                    }
+                }
+
+                sLogLine = string.Concat(
+                    (logType == LogType.Log ? "" : (logType.ToString() + " ")),
+                    DateTime.Now.ToString("yy-MM-dd HH:mm:ss.fff"),
+                    " (", Thread.CurrentThread.ManagedThreadId.ToString(), ")",
+                    " [", _stackSB.ToString(), "] ",
+                    str,
+                    "\n"
+                );
+            }
 
             AppendToLastLogs(sLogLine);
 
@@ -127,7 +132,7 @@ namespace Framework
         {
             if (lMaxLastLogSize > 0)
             {
-                lock (writeLock)
+                lock (_writeLock)
                 {
                     if (sLogLine.Length > lMaxLogLineSize)
                     {//每一行有最大的长度限制
@@ -150,10 +155,10 @@ namespace Framework
         private static void CheckFileLength(string logFilePath)
         {
             FileInfo f = new FileInfo(logFilePath);
-            if (f.Length > mMaxLogFileSize)
+            if (f.Length > _maxLogFileSize)
             {
                 BinaryReader br = new BinaryReader(File.Open(logFilePath, FileMode.Open, FileAccess.ReadWrite));
-                int pos = mMaxLogFileSize / 2;
+                int pos = _maxLogFileSize / 2;
                 br.BaseStream.Seek(pos, SeekOrigin.Begin);
                 byte[] by = br.ReadBytes(pos + 1);
                 br.Close();
@@ -168,7 +173,7 @@ namespace Framework
         {
             if (logFilePath.Length > 0)
             {
-                lock (writeLock)
+                lock (_writeLock)
                 {
                     try
                     {

@@ -5,7 +5,7 @@ using Framework;
 
 namespace Project
 {
-    public class LogoScene : BaseSceneFadeInOut
+    public class LoadScene : BaseSceneFadeInOut
     {
         private bool _ready = false;
 
