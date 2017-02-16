@@ -87,6 +87,51 @@ namespace Framework
             }
         }
 
+        public static void DestroyGameObjects(List<GameObject> listObj, bool bImmediate = false)
+        {
+            foreach (GameObject obj in listObj)
+            {
+                obj.transform.parent = null;    // parent = null，对当前帧判断孩子的个数很重要
+                if (bImmediate)
+                {
+                    UnityEngine.Object.DestroyImmediate(obj);
+                }
+                else
+                {
+                    UnityEngine.Object.Destroy(obj);
+                }
+            }
+        }
+
+
+        public static void RemoveAllChildren(GameObject gameObj)
+        {
+            List<GameObject> children = new List<GameObject>();
+            foreach (Transform child in gameObj.transform)
+            {
+                children.Add(child.gameObject);
+            }
+            DestroyGameObjects(children);
+        }
+
+        public static void RemoveAllChildren(GameObject gameObj, bool bDestoryImmediate, int fromIndex, int toIndex = -1)
+        {
+            List<GameObject> children = new List<GameObject>();
+
+            if (toIndex == -1)
+            {
+                toIndex = gameObj.transform.childCount;
+            }
+
+            for (int i = fromIndex; i <= toIndex && i < gameObj.transform.childCount; i++)
+            {
+                Transform child = gameObj.transform.GetChild(i);
+                children.Add(child.gameObject);
+            }
+
+            DestroyGameObjects(children, bDestoryImmediate);
+        }
+
         public static void SaveToJpg(Texture2D texture, string filePath, bool destroyTexture = false)
         {
             if (texture == null)
