@@ -1,6 +1,6 @@
 //----------------------------------------------
 //            NGUI: Next-Gen UI kit
-// Copyright © 2011-2014 Tasharen Entertainment
+// Copyright © 2011-2015 Tasharen Entertainment
 //----------------------------------------------
 
 using UnityEngine;
@@ -88,7 +88,13 @@ public class UIScrollView : MonoBehaviour
 	/// </summary>
 
 	public float momentumAmount = 35f;
-	
+
+	/// <summary>
+	/// Strength of the spring dampening effect.
+	/// </summary>
+
+	public float dampenStrength = 9f;
+
 	/// <summary>
 	/// Horizontal scrollbar used for visualization.
 	/// </summary>
@@ -143,8 +149,15 @@ public class UIScrollView : MonoBehaviour
 
 	public OnDragNotification onStoppedMoving;
 
-	// Deprecated functionality. Use 'movement' instead.
-	[HideInInspector][SerializeField] Vector3 scale = new Vector3(1f, 0f, 0f);
+    /// <summary>
+    /// Event callback triggered when the scroll view is moving.
+    /// Added by zhenhaiwang
+    /// </summary>
+    public OnDragNotification onMoving;
+    private Vector3 previousLocalPosition = Vector3.zero;
+
+    // Deprecated functionality. Use 'movement' instead.
+    [HideInInspector][SerializeField] Vector3 scale = new Vector3(1f, 0f, 0f);
 
 	// Deprecated functionality. Use 'contentPivot' instead.
 	[SerializeField][HideInInspector] Vector2 relativePositionOnReset = Vector2.zero;
@@ -349,23 +362,34 @@ public class UIScrollView : MonoBehaviour
 		}
 	}
 
+	[System.NonSerialized] bool mStarted = false;
+
 	void OnEnable ()
 	{
 		list.Add(this);
+		if (mStarted && Application.isPlaying) CheckScrollbars();
+	}
 
-		if (Application.isPlaying)
+	void Start ()
+	{
+		mStarted = true;
+		if (Application.isPlaying) CheckScrollbars();
+	}
+
+	void CheckScrollbars ()
+	{
+		if (horizontalScrollBar != null)
 		{
-			if (horizontalScrollBar != null)
-			{
-				EventDelegate.Add(horizontalScrollBar.onChange, OnScrollBar);
-				horizontalScrollBar.alpha = ((showScrollBars == ShowCondition.Always) || shouldMoveHorizontally) ? 1f : 0f;
-			}
+			EventDelegate.Add(horizontalScrollBar.onChange, OnScrollBar);
+			horizontalScrollBar.BroadcastMessage("CacheDefaultColor", SendMessageOptions.DontRequireReceiver);
+			horizontalScrollBar.alpha = ((showScrollBars == ShowCondition.Always) || shouldMoveHorizontally) ? 1f : 0f;
+		}
 
-			if (verticalScrollBar != null)
-			{
-				EventDelegate.Add(verticalScrollBar.onChange, OnScrollBar);
-				verticalScrollBar.alpha = ((showScrollBars == ShowCondition.Always) || shouldMoveVertically) ? 1f : 0f;
-			}
+		if (verticalScrollBar != null)
+		{
+			EventDelegate.Add(verticalScrollBar.onChange, OnScrollBar);
+			verticalScrollBar.BroadcastMessage("CacheDefaultColor", SendMessageOptions.DontRequireReceiver);
+			verticalScrollBar.alpha = ((showScrollBars == ShowCondition.Always) || shouldMoveVertically) ? 1f : 0f;
 		}
 	}
 
@@ -383,6 +407,8 @@ public class UIScrollView : MonoBehaviour
 
 	public bool RestrictWithinBounds (bool instant, bool horizontal, bool vertical)
 	{
+		if (mPanel == null) return false;
+
 		Bounds b = bounds;
 		Vector3 constraint = mPanel.CalculateConstrainOffset(b.min, b.max);
 
@@ -751,6 +777,10 @@ public class UIScrollView : MonoBehaviour
 					if (onDragStarted != null) onDragStarted();
 				}
 			}
+			else if (centerOnChild)
+			{
+				centerOnChild.Recenter();
+			}
 			else
 			{
 				if (restrictWithinPanel && mPanel.clipping != UIDrawCall.Clipping.None)
@@ -883,8 +913,18 @@ public class UIScrollView : MonoBehaviour
 		if (!Application.isPlaying) return;
 		float delta = RealTime.deltaTime;
 
-		// Fade the scroll bars if needed
-		if (showScrollBars != ShowCondition.Always && (verticalScrollBar || horizontalScrollBar))
+        // Added by zhenhaiwang
+        if (mTrans.localPosition != previousLocalPosition)
+        {
+            previousLocalPosition = mTrans.localPosition;
+            if (onMoving != null)
+            {
+                onMoving.Invoke();
+            }
+        }
+
+        // Fade the scroll bars if needed
+        if (showScrollBars != ShowCondition.Always && (verticalScrollBar || horizontalScrollBar))
 		{
 			bool vertical = false;
 			bool horizontal = false;
@@ -940,7 +980,7 @@ public class UIScrollView : MonoBehaviour
 				mScroll = NGUIMath.SpringLerp(mScroll, 0f, 20f, delta);
 
 				// Move the scroll view
-				Vector3 offset = NGUIMath.SpringDampen(ref mMomentum, 9f, delta);
+				Vector3 offset = NGUIMath.SpringDampen(ref mMomentum, dampenStrength, delta);
 				MoveAbsolute(offset);
 
 				// Restrict the contents to be within the scroll view's bounds
@@ -982,6 +1022,22 @@ public class UIScrollView : MonoBehaviour
 			// Dampen the momentum
 			mScroll = 0f;
 			NGUIMath.SpringDampen(ref mMomentum, 9f, delta);
+		}
+	}
+
+	/// <summary>
+	/// Pan the scroll view.
+	/// </summary>
+
+	public void OnPan (Vector2 delta)
+	{
+		if (horizontalScrollBar != null) horizontalScrollBar.OnPan(delta);
+		if (verticalScrollBar != null) verticalScrollBar.OnPan(delta);
+
+		if (horizontalScrollBar == null && verticalScrollBar == null)
+		{
+			if (scale.x != 0f) Scroll(delta.x);
+			else if (scale.y != 0f) Scroll(delta.y);
 		}
 	}
 

@@ -3,19 +3,20 @@
 namespace Framework
 {
     /// <summary>
-    /// Tab Page 通用组件， render脚本要派生自TabPageRender抽象类
+    /// Tab Page 通用组件， render脚本派生自TabPageRender抽象类
     /// by zhenhaiwang
     /// </summary>
     public class TabPageList : FBaseController
     {
         public delegate void RenderEvent(string name, object data);
         public event RenderEvent renderEvent;
+
         // 小箭头
         public UI2DSprite previous;
         public UI2DSprite next;
 
         // 标签
-        public int tabPanelSize;        // 当前Panel能够显示的最大标签数
+        public int tabPanelSize;                        // 当前Panel能够显示的最大标签数
         public UITable tabTable;
         public GameObject tabItemPrefab;
 
@@ -25,13 +26,10 @@ namespace Framework
 
         // 引用
         private UIScrollView _tabScrollView;
-        private UIPanel _tabScrollPanel;
         private UIDragScrollView _pageDragScrollView;   // Panel父节点静态碰撞体
         private UICenterOnChild _centerOnChild;
 
         private int _groupId = 1;
-        private int _startIndex = 0;
-        private int _endIndex = 0;
 
         // tab & page 数据
         private object[] _data;
@@ -40,7 +38,7 @@ namespace Framework
             set { _data = value; InvalidView(); }
         }
 
-        // 首次刷新打开的默认tab索引，支持直接跳转到某个标签页面
+        // 首次刷新打开的默认tab索引，支持首次直接跳转到某个标签页面，暂时不支持多次跳转
         private int _tabId = 0;
         public int tabId
         {
@@ -71,24 +69,16 @@ namespace Framework
 
             if (tabTable)
             {
-                GameObject tabTableObj = tabTable.gameObject;
-
-                _tabScrollView = tabTableObj.GetComponentInParent<UIScrollView>();
+                _tabScrollView = tabTable.GetComponentInParent<UIScrollView>();
                 if (_tabScrollView)
-                {
-                    _tabScrollView.onMomentumMove += OnTabDragMove;
-                    _tabScrollView.onDragFinished += OnTabDragMove;
-                }
-
-                _tabScrollPanel = tabTableObj.GetComponentInParent<UIPanel>();
+                    _tabScrollView.onMoving += SetTabArrowStatus;
             }
 
             if (pageTable)
             {
-                GameObject pageTableObj = pageTable.gameObject;
-                _centerOnChild = pageTableObj.GetComponent<UICenterOnChild>();
+                _centerOnChild = pageTable.GetComponent<UICenterOnChild>();
                 if (_centerOnChild) _centerOnChild.onCenter = PageOnCenter;
-                _pageDragScrollView = pageTableObj.GetComponentInParent<UIDragScrollView>();
+                _pageDragScrollView = pageTable.GetComponentInParent<UIDragScrollView>();
             }
         }
 
@@ -100,7 +90,6 @@ namespace Framework
             if (length <= 0)
             {
                 _currentTabIndex = -1;
-                ClearData();
                 return;
             }
 
@@ -139,7 +128,8 @@ namespace Framework
 
             // 滚动到具体的标签页面，延迟0.5s
             if (_tabId > 0)
-                FUtil.SetTimeout(gameObject, delegate () { MoveToTab(_tabId); }, 0.5f, "GoToTab");
+                FUtil.SetTimeout(gameObject, delegate () { MoveToTab(_tabId); }, 0.5f, "GotoTab");
+
 
             // 删除多余的标签和页面
             _tabCache.Release();
@@ -189,15 +179,8 @@ namespace Framework
             {
                 trs.localPosition = new Vector3(0.0f, trs.localPosition.y, trs.localPosition.z);
                 // 计算标签索引，以及是否显示标签小箭头
-                UpdateTabsIndex();
                 SetTabArrowStatus();
             }
-        }
-
-        void OnTabDragMove()
-        {
-            UpdateTabsIndex();
-            SetTabArrowStatus();
         }
 
         void TabOnChange()
@@ -295,48 +278,59 @@ namespace Framework
 
         void ScrollToTab(int index)
         {
-            if (_tabScrollPanel == null || !_tabScrollView.enabled || _renderWidth <= 0.0f || _tabCache.size <= 0)
+            if (!_tabScrollView.enabled || _renderWidth <= 0.0f || _tabCache.size <= 0)
                 return;
 
-            UpdateTabsIndex();
-
-            // 滚动ScrollView，scrollWheelFactor = 0.1f
-            if (index > _endIndex)
-                _tabScrollView.Scroll((index - _endIndex));
-            else if (index < _startIndex)
-                _tabScrollView.Scroll(-(_startIndex - index));
-            else
+            if (index >= tabPanelSize)
             {
-                if (index == 0)
-                    _tabScrollView.Scroll(-1.0f);
-                else if (index == _tabCache.size - 1)
-                    _tabScrollView.Scroll(1.0f);
+                _tabScrollView.MoveRelative(new Vector3(GetTabHorizontalPositionByIndex(index), 0.0f, 0.0f));
             }
         }
 
         void SetTabArrowStatus()
         {
-            previous.gameObject.SetActive(_startIndex > 0);
-            next.gameObject.SetActive(_endIndex < _tabCache.size - 1 && _tabCache.size > tabPanelSize);
+            if (_tabCache.size <= tabPanelSize)
+            {
+                previous.gameObject.SetActive(false);
+                next.gameObject.SetActive(false);
+                return;
+            }
+
+            int scope = _tabCache.size - tabPanelSize;
+            float left = 1.0f / (scope * 2.0f);
+            float right = 1.0f - left;
+
+            float offset = GetCurrentTabHorizontalNormalizedPosition();
+
+            previous.gameObject.SetActive(offset >= left);
+            next.gameObject.SetActive(offset <= right);
         }
 
-        void UpdateTabsIndex()
+        float GetCurrentTabHorizontalNormalizedPosition()
         {
-            // 计算当前未被遮挡的标签，起止render索引
-            int startIndex = (int)((_tabScrollPanel.finalClipRegion.x + (_renderWidth / 2.0f)) / _renderWidth);
-            if (startIndex > _tabCache.size - tabPanelSize)
-                startIndex = _tabCache.size - tabPanelSize;
-            else if (startIndex < 0)
-                startIndex = 0;
+            float offset = 0.0f;
 
-            int endIndex = (startIndex + tabPanelSize - 1);
-            if (endIndex > _tabCache.size - 1)
-                endIndex = _tabCache.size - 1;
-            else if (endIndex < 0)
-                endIndex = 0;
+            if (_tabScrollView != null && _tabCache.size - tabPanelSize > 0)
+            {
+                offset = -_tabScrollView.transform.localPosition.x / ((_renderWidth + tabTable.padding.x) * (_tabCache.size - tabPanelSize));
+            }
 
-            _startIndex = startIndex;
-            _endIndex = endIndex;
+            return Mathf.Clamp01(offset);
+        }
+
+        float GetTabHorizontalPositionByIndex(int index)
+        {
+            float position = 0.0f;
+
+            if (_tabScrollView != null && _tabCache.size - tabPanelSize > 0)
+            {
+                int outSize = _tabCache.size - tabPanelSize;
+                int outIndex = index < outSize ? index : outSize;
+                float thresholdX = -outSize * (_renderWidth + tabTable.padding.x);
+                position = ((float)outIndex / outSize) * thresholdX;
+            }
+
+            return position;
         }
 
         public virtual void TriggerRenderEvent(string name, object data)
@@ -349,19 +343,9 @@ namespace Framework
             return ++_groupId;
         }
 
-        void ClearData()
-        {
-            _data = null;
-            if (_tabCache != null)
-                _tabCache.Clear();
-            if (_pageCache != null)
-                _pageCache.Clear();
-        }
-
         protected override void OnDestroy()
         {
-            ClearData();
-            FUtil.ClearTimeout(gameObject, "GoToTab");
+            FUtil.ClearTimeout(gameObject, "GotoTab");
             base.OnDestroy();
         }
     }
