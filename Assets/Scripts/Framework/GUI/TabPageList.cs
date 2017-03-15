@@ -42,6 +42,7 @@ namespace Framework
         private int _tabId = 0;
         public int tabId
         {
+            get { return _tabId; }
             set { _tabId = value; }
         }
 
@@ -127,7 +128,7 @@ namespace Framework
             }
 
             // 滚动到具体的标签页面，延迟0.5s
-            if (_tabId > 0)
+            if (_tabId > 0 && _tabId != _currentTabIndex)
                 FUtil.SetTimeout(gameObject, delegate () { MoveToTab(_tabId); }, 0.5f, "GotoTab");
 
 
