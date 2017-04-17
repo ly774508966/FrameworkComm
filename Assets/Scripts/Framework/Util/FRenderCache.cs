@@ -5,11 +5,9 @@ using System.Collections.Generic;
 namespace Framework
 {
     /// <summary>
-    /// 简单的列表缓存器，能够有效提升列表数据重复刷新的效率
-    /// 暂时只支持GameObject和UIToggle两种泛型
-    /// 有任何问题请联系:zhenhaiwang
+    /// 简单的列表缓存器，管理列表数据重复刷新
+    /// 暂时支持GameObject和UIToggle两种泛型
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public class FRenderCache<T> where T : class
     {
         private GameObject parentGo;
@@ -53,10 +51,6 @@ namespace Framework
         /// AddChild(parent, prefab)
         /// 如果节点已存在，则复用；否则创建
         /// </summary>
-        /// <param name="index"></param>
-        /// <param name="parent"></param>
-        /// <param name="prefab"></param>
-        /// <returns></returns>
         public T PushRender(int index, GameObject parent = null, GameObject prefab = null)
         {
             if (index < 0)
@@ -130,8 +124,6 @@ namespace Framework
         /// <summary>
         /// 通过索引获取Render引用
         /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
         public T Render(int index)
         {
             if (buffer == null || index >= buffer.Count)
@@ -152,6 +144,9 @@ namespace Framework
 
                 for (int i = 0; i < length; i++)
                 {
+                    if (buffer[i] == null)
+                        continue;
+
                     if (type == typeof(GameObject))
                         UnityEngine.Object.Destroy(buffer[i] as GameObject);
                     else
@@ -164,10 +159,13 @@ namespace Framework
             {
                 while (buffer.Count > reserve)
                 {
-                    if (type == typeof(GameObject))
-                        UnityEngine.Object.Destroy(buffer[buffer.Count - 1] as GameObject);
-                    else
-                        UnityEngine.Object.Destroy((buffer[buffer.Count - 1] as Component).gameObject);
+                    if (buffer[buffer.Count - 1] != null)
+                    {
+                        if (type == typeof(GameObject))
+                            UnityEngine.Object.Destroy(buffer[buffer.Count - 1] as GameObject);
+                        else
+                            UnityEngine.Object.Destroy((buffer[buffer.Count - 1] as Component).gameObject);
+                    }
 
                     buffer.RemoveAt(buffer.Count - 1);
                 }
