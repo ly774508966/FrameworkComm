@@ -1,5 +1,6 @@
 using System;
 ﻿using System.Collections.Generic;
+using UnityEngine.Events;
 
 /// <summary>
 /// 自定义扩展方法
@@ -92,6 +93,14 @@ namespace Framework
             if (action != null)
             {
                 action(parameter1, parameter2);
+            }
+        }
+
+        public static void Call<T>(this UnityAction<T> action, T parameter)
+        {
+            if (action != null)
+            {
+                action(parameter);
             }
         }
     }

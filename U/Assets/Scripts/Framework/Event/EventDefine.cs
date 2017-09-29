@@ -6,11 +6,12 @@ namespace Framework
 {
     public enum ModelEvent
     {
-        None,
+        None = 0,
     }
 
     public enum MSGID
     {
-        None,
+        None = 0,
+        Net,
     }
 }
