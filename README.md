@@ -1,6 +1,6 @@
 # Common Framework for Unity
 
-Unity version: 5.2.5f1
+Unity version: 5.2.5f1 for NGUI, 5.6.3p4 for UGUI
 
 NGUI version: 3.7.4
 
