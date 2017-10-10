@@ -50,10 +50,9 @@ namespace Framework
         List<byte[]> _bufferToSend;
         List<byte[]> _bufferFromServer;
 
-        object _tcpClientLock = new object();
-
         float _heartBeatTimeCount = 0;
         bool _helloHasResponse = false;
+
         long _sendHelloTimerId = 0;
         long _connectTimerId = 0;
 
