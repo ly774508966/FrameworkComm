@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Framework;
 
 /// <summary>
-/// Excel2Json Manager
+/// Excel2Json Manager, require E2JTableList & E2JHashHelper
 /// @zhenhaiwang
 /// </summary>
 namespace Project
