@@ -17,7 +17,7 @@ namespace Framework
                 {
                     if (_instance == null)
                     {
-                        _instance = new T();
+                        new T();
                     }
                 }
 
@@ -29,6 +29,8 @@ namespace Framework
 
         protected Singleton()
         {
+            _instance = this as T;
+
             enabled = true;
             OnInit();
         }

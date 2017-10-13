@@ -1,0 +1,10 @@
+{
+  "E2JConfig": {
+    "KeyType": 1, 
+    "TableName": "E2JConfig"
+  }, 
+  "E2JTableList": {
+    "KeyType": 1, 
+    "TableName": "E2JTableList"
+  }
+}

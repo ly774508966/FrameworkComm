@@ -1,0 +1,14 @@
+{
+  "ReleaseBuild": {
+    "ConfigName": "ReleaseBuild", 
+    "ConfigValue": "0"
+  }, 
+  "ServerName": {
+    "ConfigName": "ServerName", 
+    "ConfigValue": "Dev"
+  }, 
+  "Uin": {
+    "ConfigName": "Uin", 
+    "ConfigValue": "10001"
+  }
+}

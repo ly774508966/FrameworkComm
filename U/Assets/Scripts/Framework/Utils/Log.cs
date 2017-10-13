@@ -72,12 +72,12 @@ namespace Framework
 
         public static void Error(string formatStr, params object[] args)
         {
-            PrintLine(LogType.Error, String.Format(formatStr, args));
+            PrintLine(LogType.Error, string.Format(formatStr, args));
         }
 
-        public static void DebugFormat(String formatStr, params object[] args)
+        public static void DebugFormat(string formatStr, params object[] args)
         {
-            PrintLine(LogType.Log, String.Format(formatStr, args));
+            PrintLine(LogType.Log, string.Format(formatStr, args));
         }
 
         public static void HandleException(string logString, string stackTrace, LogType logType)

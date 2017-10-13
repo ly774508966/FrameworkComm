@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Newtonsoft.Json;
 using Framework;
 
 /// <summary>
@@ -126,7 +125,7 @@ namespace Project
             try
             {
                 TextAsset jsonText = Resources.Load(_jsonPath + tableKey) as TextAsset;
-                Hashtable jsonHt = JsonConvert.DeserializeObject(jsonText.text) as Hashtable;
+                Hashtable jsonHt = Newtonsoft.Json.JsonConvert.DeserializeObject<Hashtable>(jsonText.text);
 
                 switch (keyType)
                 {
@@ -136,13 +135,14 @@ namespace Project
 
                             Dictionary<int, E2JLoader> intDict = new Dictionary<int, E2JLoader>();
 
-                            foreach (DictionaryEntry entry in jsonHt)
+                            foreach (object jsonKey in jsonHt.Keys)
                             {
-                                string key = entry.Key as string;
-                                Hashtable value = entry.Value as Hashtable;
+                                string key = jsonKey as string;
+                                string value = jsonHt[key].ToString();
+                                Hashtable ht = Newtonsoft.Json.JsonConvert.DeserializeObject<Hashtable>(value);
 
                                 E2JLoader loader = E2JHashHelper.CreateLoaderByHash(hash);
-                                loader.Load(value);
+                                loader.Load(ht);
 
                                 intDict.Add(int.Parse(key), loader);
                             }
@@ -156,13 +156,14 @@ namespace Project
 
                             Dictionary<string, E2JLoader> stringDict = new Dictionary<string, E2JLoader>();
 
-                            foreach (DictionaryEntry entry in jsonHt)
+                            foreach (object jsonKey in jsonHt.Keys)
                             {
-                                string key = entry.Key as string;
-                                Hashtable value = entry.Value as Hashtable;
+                                string key = jsonKey as string;
+                                string value = jsonHt[key].ToString();
+                                Hashtable ht = Newtonsoft.Json.JsonConvert.DeserializeObject<Hashtable>(value);
 
                                 E2JLoader loader = E2JHashHelper.CreateLoaderByHash(hash);
-                                loader.Load(value);
+                                loader.Load(ht);
 
                                 stringDict.Add(key, loader);
                             }

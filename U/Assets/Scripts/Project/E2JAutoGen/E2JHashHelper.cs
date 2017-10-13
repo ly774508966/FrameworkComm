@@ -1,4 +1,4 @@
-﻿//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 /// This is an auto-generated script, please do not modify it manually ///
 //////////////////////////////////////////////////////////////////////////
 
@@ -14,9 +14,14 @@ namespace Project
 
             switch (hash)
             {
-                case 100000001:
+                case 1413216339:
                     {
                         loader = new E2JTableList();
+                    }
+                    break;
+                case 1309828047:
+                    {
+                        loader = new E2JConfig();
                     }
                     break;
             }

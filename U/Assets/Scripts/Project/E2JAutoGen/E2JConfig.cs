@@ -9,22 +9,22 @@ using Framework;
 
 namespace Project
 {
-    public sealed class E2JTableList : E2JLoader
+    public sealed class E2JConfig : E2JLoader
     {
-        public static readonly string E2JName = "E2JTableList";
+        public static readonly string E2JName = "E2JConfig";
 
-        public string TableName { get; private set; }
-        public int KeyType { get; private set; }
+        public string ConfigName { get; private set; }
+        public string ConfigValue { get; private set; }
 
         public void Load(Hashtable ht)
         {
-            TableName = E2JConvertHelper.O2STrim(ht["TableName"]);
-            KeyType = E2JConvertHelper.O2I(ht["KeyType"]);
+            ConfigName = E2JConvertHelper.O2STrim(ht["ConfigName"]);
+            ConfigValue = E2JConvertHelper.O2STrim(ht["ConfigValue"]);
         }
 
-        public static E2JTableList GetElement(string elementKey)
+        public static E2JConfig GetElement(string elementKey)
         {
-            return E2JManager.instance.GetElementString(E2JName, elementKey) as E2JTableList;
+            return E2JManager.instance.GetElementString(E2JName, elementKey) as E2JConfig;
         }
 
         public static Dictionary<string, E2JLoader> GetElementTable()
@@ -32,11 +32,11 @@ namespace Project
             return E2JManager.instance.GetTableString(E2JName);
         }
 
-        public E2JTableList Clone()
+        public E2JConfig Clone()
         {
-            E2JTableList clone = new E2JTableList();
-            clone.TableName = TableName;
-            clone.KeyType = KeyType;
+            E2JConfig clone = new E2JConfig();
+            clone.ConfigName = ConfigName;
+            clone.ConfigValue = ConfigValue;
             return clone;
         }
 
@@ -45,9 +45,9 @@ namespace Project
             StringBuilder sb = new StringBuilder();
             sb.Append(E2JName).Append("->");
             sb.AppendLine();
-            sb.Append("TableName: ").Append(TableName);
+            sb.Append("ConfigName: ").Append(ConfigName);
             sb.AppendLine();
-            sb.Append("KeyType: ").Append(KeyType);
+            sb.Append("ConfigValue: ").Append(ConfigValue);
             sb.AppendLine();
             return sb.ToString();
         }
