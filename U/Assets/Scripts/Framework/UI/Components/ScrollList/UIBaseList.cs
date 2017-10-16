@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// 基本列表，Cell脚本需派生自UIBaseCell
+/// Base list, and cell script need to derive from UIBaseCell
 /// @zhenhaiwang
 /// </summary>
 namespace Framework.UI
@@ -23,6 +23,7 @@ namespace Framework.UI
             set
             {
                 _datas = value;
+                OnDataChanged();
                 InvalidView();
             }
         }
@@ -32,6 +33,8 @@ namespace Framework.UI
             RemoveItems();
             AddItems();
         }
+
+        protected virtual void OnDataChanged() { }
 
         void AddItems()
         {
