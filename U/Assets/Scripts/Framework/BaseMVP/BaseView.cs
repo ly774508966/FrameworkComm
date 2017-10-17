@@ -65,6 +65,9 @@ namespace Framework
         /// <summary>
         /// 界面延时刷新，提升性能
         /// </summary>
-        protected virtual void UpdateView() { }
+        protected virtual void UpdateView()
+        {
+            bWaitToUpdate = false;
+        }
     }
 }
