@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 /// </summary>
 namespace Framework
 {
-    public class LocalDataManager
+    public static class SerializeUtils
     {
         #region private
         private static bool CreateDirectoryIfNotExist(string dirPath)
@@ -31,14 +31,14 @@ namespace Framework
         {
             string path = GetRoot() + "/ServerName/Uin/";
             CreateDirectoryIfNotExist(path);
-            return path + name + ".ld";
+            return path + name + ".lf";
         }
 
         private static string GetRoot()
         {
             string rootPath = "";
 #if UNITY_EDITOR
-            rootPath = Application.dataPath + "/../LocalData/";
+            rootPath = Application.dataPath + "/../LocalFiles/";
 #elif UNITY_ANDROID
             if (string.IsNullOrEmpty(Application.persistentDataPath))
                 rootPath = "/sdcard/Android/data/com.zhenhaiwang.framework/files/";
@@ -137,6 +137,32 @@ namespace Framework
             {
                 return null;
             }
+        }
+    }
+
+    public abstract class Serializable<T> where T : Serializable<T>, new()
+    {
+        public string sKey { get; set; }
+
+        public static T Load(string key)
+        {
+            T local = SerializeUtils.Deserialize<T>(key);
+
+            if (local == null)
+            {
+                local = new T();
+            }
+
+            local.sKey = key;
+
+            return local;
+        }
+
+        public virtual bool Save(string key = null)
+        {
+            return string.IsNullOrEmpty(key) ?
+                SerializeUtils.Serialize(this, sKey) :
+                SerializeUtils.Serialize(this, key);
         }
     }
 }
