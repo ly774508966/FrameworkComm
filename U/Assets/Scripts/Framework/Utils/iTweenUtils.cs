@@ -11,13 +11,14 @@ namespace Framework
         /// <summary>
         /// 超时回调，生命周期依赖于挂载的GameObject
         /// </summary>
-        public static void CreateTimeout(GameObject timeObject, Action callback, float time, string name = "")
+        public static void CreateTimeout(GameObject go, Action callback, float time, string name = "")
         {
-            iTween.ValueTo(timeObject, iTween.Hash(
-                "name", "_ITweenTimeout_" + name,
+            iTween.ValueTo(go, iTween.Hash(
+                "name", "_iTweenTimeout_" + name,
                 "time", time,
                 "from", 0,
                 "to", 1,
+                "onupdate", (Action<object>)((x) => { }),
                 "oncomplete", (Action<object>)((x) =>
                 {
                     callback.Call();
@@ -25,9 +26,9 @@ namespace Framework
             ));
         }
 
-        public static void ClearTimeout(GameObject timeObject, string name = "")
+        public static void ClearTimeout(GameObject go, string name = "")
         {
-            iTween.StopByName(timeObject, "_ITweenTimeout_" + name);
+            iTween.StopByName(go, "_iTweenTimeout_" + name);
         }
     }
 }
