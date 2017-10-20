@@ -23,8 +23,17 @@ namespace Framework.UI
             set
             {
                 _datas = value;
+
                 OnDataChanged();
-                InvalidView();
+
+                if (_datas == null)
+                {
+                    UpdateView();
+                }
+                else
+                {
+                    InvalidView();
+                }
             }
         }
 
@@ -56,6 +65,12 @@ namespace Framework.UI
             while (contentPanel.childCount > 0)
             {
                 GameObject toRemove = contentPanel.transform.GetChild(0).gameObject;
+                UIBaseCell baseCell = toRemove.GetComponent<UIBaseCell>();
+                if (baseCell != null)
+                {
+                    baseCell.data = null;
+                    baseCell.index = 0;
+                }
                 objectPool.ReturnObject(toRemove);
             }
         }

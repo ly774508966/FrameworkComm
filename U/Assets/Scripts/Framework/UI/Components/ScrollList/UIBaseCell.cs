@@ -24,7 +24,15 @@ namespace Framework.UI
             set
             {
                 _data = value;
-                InvalidView();
+
+                if (_data == null)
+                {
+                    UpdateView();
+                }
+                else
+                {
+                    InvalidView();
+                }
             }
         } 
     }
