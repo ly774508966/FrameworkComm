@@ -151,9 +151,14 @@ namespace Framework
             if (local == null)
             {
                 local = new T();
+                local.sKey = key;
+                local.Init(false);
             }
-
-            local.sKey = key;
+            else
+            {
+                local.sKey = key;
+                local.Init(true);
+            }
 
             return local;
         }
@@ -164,5 +169,7 @@ namespace Framework
                 SerializeUtils.Serialize(this, sKey) :
                 SerializeUtils.Serialize(this, key);
         }
+
+        protected virtual void Init(bool isLocalCached) { }
     }
 }
