@@ -35,6 +35,7 @@ namespace Framework.UI
 
         protected override void UpdateView()
         {
+            base.UpdateView();
             RemoveItems();
             AddItems();
         }
@@ -44,12 +45,18 @@ namespace Framework.UI
             while (currentPageCount > 0)
             {
                 GameObject toRemove = pageContent.GetChild(0).gameObject;
+                UIBaseCell baseCell = toRemove.GetComponent<UIBaseCell>();
+                baseCell.data = null;
+                baseCell.index = 0;
                 pageObjectPool.ReturnObject(toRemove);
             }
 
-            while (currentPageCount > 0)
+            while (dotContent.childCount > 0)
             {
                 GameObject toRemove = dotContent.GetChild(0).gameObject;
+                UIBaseCell baseCell = toRemove.GetComponent<UIBaseCell>();
+                baseCell.data = null;
+                baseCell.index = 0;
                 dotObjectPool.ReturnObject(toRemove);
             }
         }

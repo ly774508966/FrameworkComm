@@ -6,16 +6,7 @@ namespace Framework.UI
 {
     public class UIBaseCell : BaseView
     {
-        private int _index;
-        public int index
-        {
-            get { return _index;  }
-            set
-            {
-                _index = value;  
-                InvalidView();
-            }
-        }
+        public int index { get; set; }
 
         private object _data = null;
         public virtual object data
@@ -27,13 +18,15 @@ namespace Framework.UI
 
                 if (_data == null)
                 {
-                    UpdateView();
+                    OnRecycle();
                 }
                 else
                 {
                     InvalidView();
                 }
             }
-        } 
+        }
+
+        protected virtual void OnRecycle() { }
     }
 }

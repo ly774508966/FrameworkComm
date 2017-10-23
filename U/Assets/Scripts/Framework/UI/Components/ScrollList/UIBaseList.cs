@@ -23,22 +23,14 @@ namespace Framework.UI
             set
             {
                 _datas = value;
-
                 OnDataChanged();
-
-                if (_datas == null)
-                {
-                    UpdateView();
-                }
-                else
-                {
-                    InvalidView();
-                }
+                InvalidView();
             }
         }
 
         protected override void UpdateView()
         {
+            base.UpdateView();
             RemoveItems();
             AddItems();
         }
