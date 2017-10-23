@@ -11,7 +11,7 @@ namespace Framework
         protected bool bWaitToUpdate = true;
 
         /// <summary>
-        /// 界面的属性变更时可调用该方法，使界面无效，下一帧会调用UpdateView刷新，提升性能
+        /// UI属性变更时可调用该方法，使界面无效，下一帧会调用UpdateView刷新
         /// </summary>
         public void InvalidView()
         {
@@ -20,9 +20,14 @@ namespace Framework
 
         protected virtual void Awake() { }
 
-        void Start()
+        protected virtual void Start() { }
+
+        /// <summary>
+        /// UI延时刷新
+        /// </summary>
+        protected virtual void UpdateView()
         {
-            InitView();
+            bWaitToUpdate = false;
         }
 
         protected virtual void FixedUpdate()
@@ -56,18 +61,5 @@ namespace Framework
         }
 
         protected virtual void OnDestroy() { }
-
-        /// <summary>
-        /// View初始化
-        /// </summary>
-        protected virtual void InitView() { }
-
-        /// <summary>
-        /// 界面延时刷新，提升性能
-        /// </summary>
-        protected virtual void UpdateView()
-        {
-            bWaitToUpdate = false;
-        }
     }
 }

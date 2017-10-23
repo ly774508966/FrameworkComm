@@ -64,7 +64,7 @@ namespace Framework.UI
 
         private float _beginDragTime = 0.0f;
 
-        protected override void InitView()
+        protected override void Start()
         {
             EnableDragScroll(dragScrollEnabled);
         }

@@ -25,10 +25,8 @@ namespace Framework.UI
             get { return _datas != null ? _datas.Length : 0; }
         }
 
-        protected override void InitView()
+        protected override void Start()
         {
-            base.InitView();
-
             _dotToggleGroup = dotContent.GetComponent<ToggleGroup>();
             _dotToggleGroup.allowSwitchOff = false;
         }

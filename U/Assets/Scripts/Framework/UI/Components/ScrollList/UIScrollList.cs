@@ -22,10 +22,8 @@ namespace Framework.UI
         float _len = 1f;
         float _stepLength = 0f;
 
-        protected override void InitView()
+        protected override void Start()
         {
-            base.InitView();
-
             _isHorizantal = scroll.horizontal;
             _isVertical = scroll.vertical;
         }

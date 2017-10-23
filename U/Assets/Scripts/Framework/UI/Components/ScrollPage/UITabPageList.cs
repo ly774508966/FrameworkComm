@@ -55,7 +55,7 @@ namespace Framework.UI
         private int _currentPageIndex = 0;
         private bool _init = false;
 
-        protected override void InitView()
+        protected override void Start()
         {
             // tab ToggleGroup
             _tabToggleGroup = tabContentPanel.GetComponent<ToggleGroup>();

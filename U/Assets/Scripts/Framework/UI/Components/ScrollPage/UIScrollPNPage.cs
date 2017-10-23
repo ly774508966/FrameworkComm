@@ -13,9 +13,8 @@ namespace Framework.UI
         public Button previous;
         public Button next;
 
-        protected override void InitView()
+        protected override void Start()
         {
-            base.InitView();
             previous.onClick.AddListener(OnClickPrevious);
             next.onClick.AddListener(OnClickNext);
         }
