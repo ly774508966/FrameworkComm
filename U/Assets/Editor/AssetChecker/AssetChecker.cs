@@ -14,7 +14,6 @@ namespace Assets.Editor
     public sealed class AssetCheckerWindow : EditorWindow
     {
         static readonly string TexturePath = "Assets/Editor/AssetChecker/__Resources/";
-        static readonly string SceneExtension = ".unity";
 
         static Texture2D CollapseTexture2D = null;
         static Texture2D ExpandTexture2D = null;
@@ -453,10 +452,12 @@ namespace Assets.Editor
 
     internal sealed class AssetInfoComparer : IComparer<AssetInfo>
     {
+        static readonly string SceneExtension = ".unity";
+
         public int Compare(AssetInfo left, AssetInfo right)
         {
-            bool bSceneFileLeft = left.sPath.EndsWith(".unity", StringComparison.OrdinalIgnoreCase);
-            bool bSceneFileRight = right.sPath.EndsWith(".unity", StringComparison.OrdinalIgnoreCase);
+            bool bSceneFileLeft = left.sPath.EndsWith(SceneExtension, StringComparison.OrdinalIgnoreCase);
+            bool bSceneFileRight = right.sPath.EndsWith(SceneExtension, StringComparison.OrdinalIgnoreCase);
 
             if (bSceneFileLeft == bSceneFileRight)
             {

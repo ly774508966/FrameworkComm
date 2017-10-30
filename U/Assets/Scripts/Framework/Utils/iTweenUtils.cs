@@ -30,5 +30,28 @@ namespace Framework
         {
             iTween.StopByName(go, "_iTweenTimeout_" + name);
         }
+
+        public static void MoveTo(
+            this GameObject go,
+            Vector3 position,
+            float time,
+            Action callback,
+            iTween.EaseType easeType = iTween.EaseType.linear,
+            bool isLocal = false,
+            string name = "")
+        {
+            go.SetActive(true);
+            iTween.MoveTo(go, iTween.Hash(
+                "position", position,
+                "time", time,
+                "islocal", isLocal,
+                "name", "_ITweenMoveTo_" + name,
+                "easetype", easeType,
+                "oncomplete", (Action<object>)((x) =>
+                {
+                    callback.Call();
+                })
+             ));
+        }
     }
 }
