@@ -152,12 +152,12 @@ namespace Framework
             {
                 local = new T();
                 local.sKey = key;
-                local.Init(false);
+                local.OnInit(false);
             }
             else
             {
                 local.sKey = key;
-                local.Init(true);
+                local.OnInit(true);
             }
 
             return local;
@@ -170,6 +170,12 @@ namespace Framework
                 SerializeUtils.Serialize(this, key);
         }
 
-        protected virtual void Init(bool isLocalCached) { }
+        public void Clear()
+        {
+            OnClear();
+        }
+
+        protected virtual void OnInit(bool isLoadFromFile) { }
+        protected virtual void OnClear() { }
     }
 }
