@@ -34,12 +34,9 @@ namespace Assets.Editor
         [MenuItem("Window/Asset Checker", priority = 2)]
         static void Open()
         {
-            AssetCheckerWindow window = GetWindow<AssetCheckerWindow>();
+            AssetCheckerWindow window = GetWindow<AssetCheckerWindow>("Asset Checker", true);
             window.wantsMouseMove = true;
-            window.titleContent = new GUIContent("Asset Checker");
             window.minSize = new Vector2(400f, 200f);
-            window.Show();
-            window.Focus();
         }
 
         void OnGUI()
