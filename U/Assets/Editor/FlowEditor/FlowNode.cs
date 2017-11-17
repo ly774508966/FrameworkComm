@@ -17,15 +17,28 @@ namespace Assets.Editor
 
     public abstract class FlowNode : ScriptableObject
     {
-        [SerializeField]
-        protected FlowNodeType type { get; set; }
+        public virtual string Name
+        {
+            get { return "FlowNode"; }
+        }
 
+        public virtual float NodeWidth
+        {
+            get { return 150f; }
+        }
+
+        public virtual float NodeHeight
+        {
+            get { return 50f; }
+        }
+
+        public FlowNodeType type { get; set; }
         public int id { get; set; }
-        public Rect position { get; set; }
+        public Rect rect { get; set; }
         public Color color { get; set; }
         public List<int> linkList { get; set; }
 
-        public static FlowNode Create(FlowNodeType type, int id, Rect position)
+        public static FlowNode Create(FlowNodeType type, int id, Vector2 position)
         {
             FlowNode node = null;
 
@@ -50,33 +63,33 @@ namespace Assets.Editor
 
             node.type = type;
             node.id = id;
-            node.position = position;
+            node.rect = new Rect(position.x, position.y, node.NodeWidth, node.NodeHeight);
             node.color = Color.white;
 
             return node;
         }
 
-        public static FlowNode CreateInGraph(FlowGraph graph, FlowNodeType type, int id, Rect position)
+        public static FlowNode CreateInGraph(FlowGraph graph, FlowNodeType type, int id, Vector2 position)
         {
             FlowNode node = Create(type, id, position);
-            node.SetPositionInGraph(graph, position);
+            node.SetRectInGraph(graph, node.rect);
             graph.AddNode(node);
             return node;
         }
 
-        public Rect GetPositionInGraph(FlowGraph graph)
+        public Rect GetRectInGraph(FlowGraph graph)
         {
-            Rect rect = position;
-            rect.x += graph.offset.x;
-            rect.y += graph.offset.y;
-            return rect;
+            Rect rectCopy = rect;
+            rectCopy.x += graph.offset.x;
+            rectCopy.y += graph.offset.y;
+            return rectCopy;
         }
 
-        public void SetPositionInGraph(FlowGraph graph, Rect rect)
+        public void SetRectInGraph(FlowGraph graph, Rect rect)
         {
             rect.x -= graph.offset.x;
             rect.y -= graph.offset.y;
-            position = rect;
+            this.rect = rect;
         }
 
         public void AddLinkNode(FlowNode node)
@@ -94,20 +107,5 @@ namespace Assets.Editor
                 linkList.Remove(node.id);
             }
         }
-    }
-
-    public class StartNode : FlowNode
-    {
-        public string nodeName = "StartNode";
-    }
-
-    public class NormalNode : FlowNode
-    {
-        public string nodeName = "NormalNode";
-    }
-
-    public class EndNode : FlowNode
-    {
-        public string nodeName = "EndNode";
     }
 }
