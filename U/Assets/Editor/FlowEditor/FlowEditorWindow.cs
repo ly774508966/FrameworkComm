@@ -44,6 +44,7 @@ namespace Assets.Editor
         private FlowNode _curLinkingFlowNode;
 
         private Object _selectObject;
+        private Vector2 _inspectorScroll = Vector2.zero;
 
         [MenuItem("Window/Flow Editor", priority = 3)]
         static void Open()
@@ -153,6 +154,7 @@ namespace Assets.Editor
                                     if (_rectMain.Contains(Event.current.mousePosition))
                                     {
                                         _bMainDragging = true;
+                                        GUI.FocusControl("");
                                         Event.current.Use();
                                     }
                                     else if (_rectSplitter.Contains(Event.current.mousePosition))
@@ -160,14 +162,25 @@ namespace Assets.Editor
                                         _bSplitterDragging = true;
                                         Event.current.Use();
                                     }
+                                    else if (_rectInspector.Contains(Event.current.mousePosition))
+                                    {
+                                        GUI.FocusControl("");
+                                        Event.current.Use();
+                                    }
                                 }
                                 else if (Event.current.button == 1)
                                 {
+                                    GUI.FocusControl("");
+
                                     if (_rectMain.Contains(Event.current.mousePosition))
                                     {
                                         HandlePopMenu();
                                         Event.current.Use();
                                         Repaint();
+                                    }
+                                    else if (_rectInspector.Contains(Event.current.mousePosition))
+                                    {
+                                        Event.current.Use();
                                     }
                                 }
                             }
@@ -237,7 +250,7 @@ namespace Assets.Editor
             object[] argArray = args as object[];
             FlowNodeType type = (FlowNodeType)argArray[0];
             Vector2 mousePosition = (Vector2)argArray[1];
-            FlowNode.CreateInGraph(_curFlowGraph, type, _curFlowGraph.GetNodeCount() + 1, new Vector2(mousePosition.x, mousePosition.y));
+            FlowNode.CreateInGraph(_curFlowGraph, type, _curFlowGraph.GetNextNodeID(), new Vector2(mousePosition.x, mousePosition.y));
         }
 
         void DrawMain()
@@ -251,38 +264,43 @@ namespace Assets.Editor
             }
             else
             {
-                Handles.BeginGUI();
-                foreach (FlowNode node in _curFlowGraph.nodeList)
+                if (_curFlowGraph.GetNodeCount() > 0)
                 {
-                    if (node == null)
-                    {
-                        Debug.Log("[FlowEditorWindow]DrawMain node is null");
-                        continue;
-                    }
+                    Handles.BeginGUI();
 
-                    if (node.linkList == null)
+                    foreach (FlowNode node in _curFlowGraph.nodeList)
                     {
-                        Debug.Log("[FlowEditorWindow]DrawMain node.linkList is null"); continue;
-                    }
-
-                    FlowNode deleteNode = null;
-                    foreach (int linkId in node.linkList)
-                    {
-                        FlowNode linkNode = _curFlowGraph.GetNode(linkId);
-                        Rect nodeRect = node.GetRectInGraph(_curFlowGraph);
-                        Rect linkRect = linkNode.GetRectInGraph(_curFlowGraph);
-                        if (DrawBezier(new Vector2(nodeRect.x + node.NodeWidth, nodeRect.y + fLinkIconWidth / 2f), new Vector2(linkRect.x, linkRect.y + fLinkIconWidth / 2f), Color.yellow))
+                        if (node == null)
                         {
-                            deleteNode = linkNode;
+                            Debug.Log("[FlowEditorWindow]DrawMain node is null");
+                            continue;
+                        }
+
+                        if (node.linkList == null)
+                        {
+                            continue;
+                        }
+
+                        FlowNode deleteNode = null;
+                        foreach (int linkId in node.linkList)
+                        {
+                            FlowNode linkNode = _curFlowGraph.GetNode(linkId);
+                            Rect nodeRect = node.GetRectInGraph(_curFlowGraph);
+                            Rect linkRect = linkNode.GetRectInGraph(_curFlowGraph);
+                            if (DrawBezier(new Vector2(nodeRect.x + nodeRect.width, nodeRect.y + fLinkIconWidth / 2f), new Vector2(linkRect.x, linkRect.y + fLinkIconWidth / 2f), Color.yellow))
+                            {
+                                deleteNode = linkNode;
+                            }
+                        }
+
+                        if (deleteNode != null)
+                        {
+                            node.RemoveLinkNode(deleteNode);
                         }
                     }
 
-                    if (deleteNode != null)
-                    {
-                        node.RemoveLinkNode(deleteNode);
-                    }
+                    Handles.EndGUI();
                 }
-                Handles.EndGUI();
 
                 BeginWindows();
 
@@ -330,7 +348,14 @@ namespace Assets.Editor
 
             if (_curFlowGraph == null) return;
 
-            // to do
+            _inspectorScroll = GUILayout.BeginScrollView(_inspectorScroll, GUILayout.Width(_rectInspector.width), GUILayout.Height(_rectInspector.height - 10f));
+            {
+                if (_curSelectFlowNode != null)
+                {
+                    _curSelectFlowNode.DrawProperty();
+                }
+            }
+            GUILayout.EndScrollView();
         }
 
         void DrawObjectField()
@@ -385,7 +410,7 @@ namespace Assets.Editor
             if (_curLinkingFlowNode == null || Event.current == null) return;
 
             Rect nodeRect = _curLinkingFlowNode.GetRectInGraph(_curFlowGraph);
-            DrawBezier(new Vector2(nodeRect.x + _curLinkingFlowNode.NodeWidth, nodeRect.y + fLinkIconWidth / 2f), Event.current.mousePosition, Color.white);
+            DrawBezier(new Vector2(nodeRect.x + nodeRect.width, nodeRect.y + fLinkIconWidth / 2f), Event.current.mousePosition, Color.white);
 
             if (Event.current.type == EventType.MouseMove)
                 Repaint();
@@ -411,9 +436,9 @@ namespace Assets.Editor
             Vector3 startTangent = new Vector3(startPos.x + distance / 2.5f, startPos.y);
             Vector3 endTangent = new Vector3(endPos.x - distance / 2.5f, endPos.y);
 
-            Handles.DrawBezier(startPos, endPos, startTangent, endTangent, color, null, 2f);
+            Handles.DrawBezier(startPos, endPos, startTangent, endTangent, color, null, 4f);
 
-            Rect deleteRect = new Rect(startPos.x + (endPos.x - startPos.x) * 0.5f, startPos.y + (endPos.y - startPos.y) * 0.5f, 16, 16);
+            Rect deleteRect = new Rect(startPos.x + (endPos.x - startPos.x) * 0.5f - fLinkIconWidth / 2f, startPos.y + (endPos.y - startPos.y) * 0.5f - fLinkIconWidth / 2f, fLinkIconWidth, fLinkIconWidth);
             if (GUI.Button(deleteRect, new GUIContent(texUnlink), iconButtonStyle))
             {
                 return true;

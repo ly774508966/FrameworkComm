@@ -11,9 +11,21 @@ namespace Assets.Editor
         public List<FlowNode> nodeList { get; set; }
         public Vector2 offset { get; set; }
 
+        private int _nextNodeID = 0;
+
         public int GetNodeCount()
         {
             return nodeList != null ? nodeList.Count : 0;
+        }
+
+        public int GetNextNodeID()
+        {
+            if (_nextNodeID == 0)
+            {
+                _nextNodeID = GetNodeCount() + 1;
+            }
+
+            return _nextNodeID++;
         }
 
         public void AddNode(FlowNode node)

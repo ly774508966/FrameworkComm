@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 /// <summary>
 /// @zhenhaiwang
@@ -94,6 +95,11 @@ namespace Assets.Editor
 
         public void AddLinkNode(FlowNode node)
         {
+            if (linkList == null)
+            {
+                linkList = new List<int>();
+            }
+
             if (node != this && !linkList.Contains(node.id))
             {
                 linkList.Add(node.id);
@@ -102,10 +108,22 @@ namespace Assets.Editor
 
         public void RemoveLinkNode(FlowNode node)
         {
+            if (linkList == null)
+            {
+                return;
+            }
+
             if (linkList.Contains(node.id))
             {
                 linkList.Remove(node.id);
             }
+        }
+
+        public virtual void DrawProperty()
+        {
+            GUILayout.Label(Name, EditorStyles.boldLabel);
+            EditorGUILayout.Space();
+            color = EditorGUILayout.ColorField("Node Color", color);
         }
     }
 }

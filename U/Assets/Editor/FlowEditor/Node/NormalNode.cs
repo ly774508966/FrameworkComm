@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿using UnityEditor;
+
+/// <summary>
 /// @zhenhaiwang
 /// </summary>
 namespace Assets.Editor
@@ -13,6 +15,15 @@ namespace Assets.Editor
         public override float NodeWidth
         {
             get { return 180f; }
+        }
+
+        public string sDescription { get; set; }
+
+        public override void DrawProperty()
+        {
+            base.DrawProperty();
+
+            sDescription = EditorGUILayout.TextField("Description", sDescription);
         }
     }
 }
