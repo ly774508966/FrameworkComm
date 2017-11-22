@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
@@ -33,6 +34,8 @@ namespace Assets.Editor
         private Rect _rectInspector = new Rect(fWindowMinWidth - fInspectorMinWidth, 0f, fInspectorMinWidth, fWindowMinHeight);
         private Rect _rectSplitter = new Rect(fWindowMinWidth - fInspectorMinWidth - fSplitterWidth, 0f, fSplitterWidth, fWindowMinHeight);
 
+        private Vector2 _inspectorScroll = Vector2.zero;
+
         private float _fSplitterX;
         private float _fPreWindowWidth;
 
@@ -43,15 +46,16 @@ namespace Assets.Editor
         private FlowNode _curSelectFlowNode;
         private FlowNode _curLinkingFlowNode;
 
-        private Object _selectObject;
-        private Vector2 _inspectorScroll = Vector2.zero;
+        private string _assetPath = "";
+        private Object _selectAsset;
 
         [MenuItem("Window/Flow Editor", priority = 3)]
-        static void Open()
+        public static FlowEditorWindow Open()
         {
             FlowEditorWindow window = GetWindow<FlowEditorWindow>("Flow Editor", true);
             window.minSize = new Vector2(fWindowMinWidth, fWindowMinHeight);
             window.wantsMouseMove = true;
+            return window;
         }
 
         void OnGUI()
@@ -190,7 +194,7 @@ namespace Assets.Editor
                         {
                             if (_bMainDragging)
                             {
-                                _curFlowGraph.offset += new Vector2(Event.current.delta.x, Event.current.delta.y);
+                                _curFlowGraph.graphOffset += new Vector2(Event.current.delta.x, Event.current.delta.y);
                                 Event.current.Use();
                             }
                             else if (_bSplitterDragging)
@@ -250,7 +254,7 @@ namespace Assets.Editor
             object[] argArray = args as object[];
             FlowNodeType type = (FlowNodeType)argArray[0];
             Vector2 mousePosition = (Vector2)argArray[1];
-            FlowNode.CreateInGraph(_curFlowGraph, type, _curFlowGraph.GetNextNodeID(), new Vector2(mousePosition.x, mousePosition.y));
+            FlowNode.CreateInGraph(_curFlowGraph, type, _curFlowGraph.NodeNextID, new Vector2(mousePosition.x, mousePosition.y));
         }
 
         void DrawMain()
@@ -264,11 +268,11 @@ namespace Assets.Editor
             }
             else
             {
-                if (_curFlowGraph.GetNodeCount() > 0)
+                if (_curFlowGraph.NodeCount > 0)
                 {
                     Handles.BeginGUI();
 
-                    foreach (FlowNode node in _curFlowGraph.nodeList)
+                    foreach (FlowNode node in _curFlowGraph.NodeList)
                     {
                         if (node == null)
                         {
@@ -304,15 +308,16 @@ namespace Assets.Editor
 
                 BeginWindows();
 
-                int graphCount = _curFlowGraph.GetNodeCount();
-                for (int i = 0; i < graphCount; i++)
+                List<FlowNode> nodeList = _curFlowGraph.NodeList;
+                int nodeCount = _curFlowGraph.NodeCount;
+                for (int i = 0; i < nodeCount; i++)
                 {
-                    FlowNode node = _curFlowGraph.nodeList[i];
-                    Rect position = node.GetRectInGraph(_curFlowGraph);
-                    Vector2 topLeft = new Vector2(position.x, position.y);
-                    Vector2 topRight = new Vector2(position.x + node.rect.width, position.y);
-                    Vector2 bottomLeft = new Vector2(position.x, position.y + node.rect.height);
-                    Vector2 bottomRight = new Vector2(position.x + node.rect.width, position.y + node.rect.height);
+                    FlowNode node = nodeList[i];
+                    Rect rect = node.GetRectInGraph(_curFlowGraph);
+                    Vector2 topLeft = new Vector2(rect.x, rect.y);
+                    Vector2 topRight = new Vector2(rect.x + node.NodeWidth, rect.y);
+                    Vector2 bottomLeft = new Vector2(rect.x, rect.y + node.NodeHeight);
+                    Vector2 bottomRight = new Vector2(rect.x + node.NodeWidth, rect.y + node.NodeHeight);
 
                     if (_rectMain.Contains(topLeft) ||
                         _rectMain.Contains(topRight) ||
@@ -325,15 +330,15 @@ namespace Assets.Editor
                         }
                         else
                         {
-                            GUI.color = Color.white;
+                            GUI.color = node.color;
                         }
 
-                        position = GUI.Window(node.id, position, DrawNode, node.Name);
+                        rect = GUI.Window(node.id, rect, DrawNode, node.NodeName);
 
                         GUI.color = Color.white;
                     }
 
-                    node.SetRectInGraph(_curFlowGraph, position);
+                    node.SetRectInGraph(_curFlowGraph, rect.position);
                 }
 
                 DrawLinking();
@@ -348,7 +353,14 @@ namespace Assets.Editor
 
             if (_curFlowGraph == null) return;
 
-            _inspectorScroll = GUILayout.BeginScrollView(_inspectorScroll, GUILayout.Width(_rectInspector.width), GUILayout.Height(_rectInspector.height - 10f));
+            EditorGUILayout.Space();
+
+            if (GUILayout.Button("Save"))
+            {
+                SaveGraph();
+            }
+
+            _inspectorScroll = GUILayout.BeginScrollView(_inspectorScroll, GUILayout.Width(_rectInspector.width), GUILayout.Height(_rectInspector.height - 30f));
             {
                 if (_curSelectFlowNode != null)
                 {
@@ -360,18 +372,18 @@ namespace Assets.Editor
 
         void DrawObjectField()
         {
-            Object newSelectObject = EditorGUILayout.ObjectField(_selectObject, typeof(Object), false);
+            Object newSelectAsset = EditorGUILayout.ObjectField(_selectAsset, typeof(Object), false);
 
-            if (newSelectObject != null)
+            if (newSelectAsset != _selectAsset)
             {
-                if (newSelectObject != _selectObject)
+                if (newSelectAsset != null)
                 {
-                    _curFlowGraph = AssetDatabase.LoadAssetAtPath(AssetDatabase.GetAssetPath(_selectObject = newSelectObject), typeof(FlowGraph)) as FlowGraph;
+                    CreateGraph(newSelectAsset);
                 }
-            }
-            else
-            {
-                _selectObject = null;
+                else
+                {
+                    ClearGraph();
+                }
             }
         }
 
@@ -379,7 +391,7 @@ namespace Assets.Editor
         {
             FlowNode node = _curFlowGraph.GetNode(id);
 
-            if (GUI.Button(new Rect(node.rect.width - fLinkIconWidth, 0f, fLinkIconWidth, fLinkIconWidth), new GUIContent(texLinkout), iconButtonStyle))
+            if (GUI.Button(new Rect(node.NodeWidth - fLinkIconWidth, 0f, fLinkIconWidth, fLinkIconWidth), new GUIContent(texLinkout), iconButtonStyle))
             {
                 _curLinkingFlowNode = node;
             }
@@ -468,33 +480,47 @@ namespace Assets.Editor
             if (_curSelectFlowNode != null)
             {
                 _curFlowGraph.RemoveNode(_curSelectFlowNode);
-                DestroyImmediate(_curSelectFlowNode, true);
                 _curSelectFlowNode = null;
                 return true;
             }
             return false;
         }
 
+        void ClearGraph()
+        {
+            _selectAsset = null;
+            _curFlowGraph = null;
+            _assetPath = "";
+        }
+
+        public void CreateGraph(Object asset)
+        {
+            _selectAsset = asset;
+            _assetPath = AssetDatabase.GetAssetPath(_selectAsset);
+            _curFlowGraph = FlowGraph.LoadFromAsset(_selectAsset);
+        }
+
         void SaveGraph()
         {
             if (_curFlowGraph != null)
             {
-                if (_selectObject == null)
+                if (_selectAsset == null)
                 {
                     string path = EditorUtility.SaveFilePanel(
                         "Save flow graph as asset",
                         sGraphFilePath,
-                        "FlowGraph.asset",
+                        "Flow Graph.asset",
                         "asset");
 
                     if (path.Length > 0)
                     {
-                        AssetDatabase.CreateAsset(_curFlowGraph, sGraphFilePath + Path.GetFileName(path));
+                        _assetPath = sGraphFilePath + Path.GetFileName(path);
+                        _selectAsset = _curFlowGraph.Save(_assetPath, true);
                     }
                 }
                 else
                 {
-                    EditorUtility.SetDirty(_curFlowGraph);
+                    _curFlowGraph.Save(_assetPath, false);
                 }
 
                 AssetDatabase.SaveAssets();

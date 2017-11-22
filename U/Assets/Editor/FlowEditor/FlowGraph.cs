@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
+using Newtonsoft.Json;
 
 /// <summary>
 /// @zhenhaiwang
@@ -8,24 +10,33 @@ namespace Assets.Editor
 {
     public class FlowGraph : ScriptableObject
     {
-        public List<FlowNode> nodeList { get; set; }
-        public Vector2 offset { get; set; }
+        public List<string> nodeJsonList;
+        public Vector2 graphOffset;
 
-        private int _nextNodeID = 0;
+        private List<FlowNode> _nodeList = new List<FlowNode>();
+        private int _nodeNextID = 0;
 
-        public int GetNodeCount()
+        public List<FlowNode> NodeList
         {
-            return nodeList != null ? nodeList.Count : 0;
+            get { return _nodeList; }
         }
 
-        public int GetNextNodeID()
+        public int NodeCount
         {
-            if (_nextNodeID == 0)
-            {
-                _nextNodeID = GetNodeCount() + 1;
-            }
+            get { return _nodeList.Count; }
+        }
 
-            return _nextNodeID++;
+        public int NodeNextID
+        {
+            get
+            {
+                if (_nodeNextID == 0)
+                {
+                    _nodeNextID = NodeCount + 1;
+                }
+
+                return _nodeNextID++;
+            }
         }
 
         public void AddNode(FlowNode node)
@@ -35,34 +46,82 @@ namespace Assets.Editor
                 return;
             }
 
-            if (nodeList == null)
-            {
-                nodeList = new List<FlowNode>();
-            }
-
-            nodeList.Add(node);
+            _nodeList.Add(node);
         }
 
-        public FlowNode GetNode(int id)
+        public FlowNode GetNode(int nodeID)
         {
-            if (nodeList != null)
-            {
-                return nodeList.Find(node => node.id == id);
-            }
-            return null;
+            return _nodeList.Find(node => node.id == nodeID);
         }
 
         public void RemoveNode(FlowNode node)
         {
-            if (nodeList != null)
+            foreach (FlowNode flowNode in _nodeList)
             {
-                foreach (FlowNode flowNode in nodeList)
-                {
-                    flowNode.RemoveLinkNode(node);
-                }
-
-                nodeList.Remove(node);
+                flowNode.RemoveLinkNode(node);
             }
+
+            _nodeList.Remove(node);
+        }
+
+        public static FlowGraph LoadFromAsset(Object graphAsset)
+        {
+            FlowGraph graph = AssetDatabase.LoadAssetAtPath(AssetDatabase.GetAssetPath(graphAsset), typeof(FlowGraph)) as FlowGraph;
+
+            if (graph != null && graph.nodeJsonList != null)
+            {
+                graph._nodeNextID = 0;
+                graph._nodeList.Clear();
+
+                foreach (string json in graph.nodeJsonList)
+                {
+                    FlowNode node = JsonConvert.DeserializeObject<FlowNode>(json) as FlowNode;
+
+                    switch (node.type)
+                    {
+                        case FlowNodeType.Start:
+                            {
+                                node = JsonConvert.DeserializeObject<StartNode>(json) as StartNode;
+                            }
+                            break;
+                        case FlowNodeType.Normal:
+                            {
+                                node = JsonConvert.DeserializeObject<NormalNode>(json) as NormalNode;
+                            }
+                            break;
+                        case FlowNodeType.End:
+                            {
+                                node = JsonConvert.DeserializeObject<EndNode>(json) as EndNode;
+                            }
+                            break;
+                    }
+
+                    graph._nodeList.Add(node);
+                }
+            }
+
+            return graph;
+        }
+
+        public Object Save(string path, bool create)
+        {
+            nodeJsonList = new List<string>();
+
+            foreach (FlowNode node in _nodeList)
+            {
+                nodeJsonList.Add(JsonConvert.SerializeObject(node, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+            }
+
+            if (create)
+            {
+                AssetDatabase.CreateAsset(this, path);
+            }
+            else
+            {
+                EditorUtility.SetDirty(this);
+            }
+
+            return this;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Assets.Editor
 {
     public class NormalNode : FlowNode
     {
-        public override string Name
+        public override string NodeName
         {
             get { return "NormalNode"; }
         }
@@ -17,7 +17,7 @@ namespace Assets.Editor
             get { return 180f; }
         }
 
-        public string sDescription { get; set; }
+        public string sDescription;
 
         public override void DrawProperty()
         {

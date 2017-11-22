@@ -7,7 +7,7 @@ namespace Assets.Editor
 {
     public class StartNode : FlowNode
     {
-        public override string Name
+        public override string NodeName
         {
             get { return "StartNode"; }
         }
@@ -17,7 +17,7 @@ namespace Assets.Editor
             get { return 150f; }
         }
 
-        public string sDescription { get; set; }
+        public string sDescription;
 
         public override void DrawProperty()
         {

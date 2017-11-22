@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aad80118c943580448a571d4ea7e10c4, type: 3}
+  m_Name: Flow Graph
+  m_EditorClassIdentifier: 
+  nodeJsonList:
+  - '{"sDescription":"Start","type":1,"id":1,"position":{"x":169.0,"y":314.0,"normalized":{"x":0.4739326,"y":0.8805612,"magnitude":1.0,"sqrMagnitude":1.00000012},"magnitude":356.5908,"sqrMagnitude":127157.0},"color":{"r":1.0,"g":1.0,"b":1.0,"a":1.0,"grayscale":1.0,"maxColorComponent":1.0},"linkList":[2,3],"NodeName":"StartNode","NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"sDescription":"1","type":2,"id":2,"position":{"x":467.0,"y":529.0,"normalized":{"x":0.6618091,"y":0.7496724,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":705.641541,"sqrMagnitude":497930.0},"color":{"r":0.0,"g":1.0,"b":1.0,"a":1.0,"grayscale":0.701000035,"maxColorComponent":1.0},"linkList":[4],"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
+  - '{"sDescription":"2","type":2,"id":3,"position":{"x":484.0,"y":86.0,"normalized":{"x":0.9845781,"y":0.1749457,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":491.581116,"sqrMagnitude":241652.0},"color":{"r":0.0,"g":1.0,"b":0.0,"a":1.0,"grayscale":0.587,"maxColorComponent":1.0},"linkList":[4],"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
+  - '{"sDescription":"End","type":3,"id":4,"position":{"x":845.0,"y":329.0,"normalized":{"x":0.931859732,"y":0.362818778,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":906.7888,"sqrMagnitude":822266.0},"color":{"r":1.0,"g":1.0,"b":1.0,"a":1.0,"grayscale":1.0,"maxColorComponent":1.0},"linkList":[],"NodeName":"EndNode","NodeWidth":120.0,"NodeHeight":50.0}'
+  graphOffset: {x: -13, y: 15}

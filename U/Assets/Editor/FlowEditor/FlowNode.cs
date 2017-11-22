@@ -16,9 +16,9 @@ namespace Assets.Editor
         Count,
     }
 
-    public abstract class FlowNode : ScriptableObject
+    public class FlowNode
     {
-        public virtual string Name
+        public virtual string NodeName
         {
             get { return "FlowNode"; }
         }
@@ -33,11 +33,11 @@ namespace Assets.Editor
             get { return 50f; }
         }
 
-        public FlowNodeType type { get; set; }
-        public int id { get; set; }
-        public Rect rect { get; set; }
-        public Color color { get; set; }
-        public List<int> linkList { get; set; }
+        public FlowNodeType type = FlowNodeType.None;
+        public int id = 0;
+        public Vector2 position = Vector2.zero;
+        public Color color = Color.white;
+        public List<int> linkList = new List<int>();
 
         public static FlowNode Create(FlowNodeType type, int id, Vector2 position)
         {
@@ -47,24 +47,24 @@ namespace Assets.Editor
             {
                 case FlowNodeType.Start:
                     {
-                        node = CreateInstance<StartNode>();
+                        node = new StartNode();
                     }
                     break;
                 case FlowNodeType.Normal:
                     {
-                        node = CreateInstance<NormalNode>();
+                        node = new NormalNode();
                     }
                     break;
                 case FlowNodeType.End:
                     {
-                        node = CreateInstance<EndNode>();
+                        node = new EndNode();
                     }
                     break;
             }
 
             node.type = type;
             node.id = id;
-            node.rect = new Rect(position.x, position.y, node.NodeWidth, node.NodeHeight);
+            node.position = position;
             node.color = Color.white;
 
             return node;
@@ -73,33 +73,23 @@ namespace Assets.Editor
         public static FlowNode CreateInGraph(FlowGraph graph, FlowNodeType type, int id, Vector2 position)
         {
             FlowNode node = Create(type, id, position);
-            node.SetRectInGraph(graph, node.rect);
+            node.SetRectInGraph(graph, node.position);
             graph.AddNode(node);
             return node;
         }
 
         public Rect GetRectInGraph(FlowGraph graph)
         {
-            Rect rectCopy = rect;
-            rectCopy.x += graph.offset.x;
-            rectCopy.y += graph.offset.y;
-            return rectCopy;
+            return new Rect(position.x + graph.graphOffset.x, position.y + graph.graphOffset.y, NodeWidth, NodeHeight);
         }
 
-        public void SetRectInGraph(FlowGraph graph, Rect rect)
+        public void SetRectInGraph(FlowGraph graph, Vector2 position)
         {
-            rect.x -= graph.offset.x;
-            rect.y -= graph.offset.y;
-            this.rect = rect;
+            this.position = new Vector2(position.x - graph.graphOffset.x, position.y - graph.graphOffset.y);
         }
 
         public void AddLinkNode(FlowNode node)
         {
-            if (linkList == null)
-            {
-                linkList = new List<int>();
-            }
-
             if (node != this && !linkList.Contains(node.id))
             {
                 linkList.Add(node.id);
@@ -108,11 +98,6 @@ namespace Assets.Editor
 
         public void RemoveLinkNode(FlowNode node)
         {
-            if (linkList == null)
-            {
-                return;
-            }
-
             if (linkList.Contains(node.id))
             {
                 linkList.Remove(node.id);
@@ -121,7 +106,7 @@ namespace Assets.Editor
 
         public virtual void DrawProperty()
         {
-            GUILayout.Label(Name, EditorStyles.boldLabel);
+            GUILayout.Label(NodeName, EditorStyles.boldLabel);
             EditorGUILayout.Space();
             color = EditorGUILayout.ColorField("Node Color", color);
         }
