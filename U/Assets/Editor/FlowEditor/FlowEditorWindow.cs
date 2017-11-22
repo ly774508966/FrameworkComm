@@ -21,6 +21,8 @@ namespace Assets.Editor
         private const float fSplitterWidth = 4f;
         // Inspector
         private const float fInspectorMinWidth = 250f;
+        // MiniMap
+        private const float fMiniMapScale = 0.1f;
         // Texture2D
         private const float fLinkIconWidth = 16f;
         private static Texture2D texLinkin;
@@ -78,6 +80,13 @@ namespace Assets.Editor
             HandleEvents();
         }
 
+        void OnLostFocus()
+        {
+            _curLinkingFlowNode = null;
+            _bMainDragging = false;
+            _bSplitterDragging = false;
+        }
+
         void OnDestroy()
         {
             SaveGraph();
@@ -121,6 +130,7 @@ namespace Assets.Editor
             GUI.skin = windowSkin;
         }
 
+        #region Handle
         void HandleWindowSizeChanged()
         {
             float width = position.width;
@@ -256,7 +266,9 @@ namespace Assets.Editor
             Vector2 mousePosition = (Vector2)argArray[1];
             FlowNode.CreateInGraph(_curFlowGraph, type, _curFlowGraph.NodeNextID, new Vector2(mousePosition.x, mousePosition.y));
         }
+        #endregion
 
+        #region Draw
         void DrawMain()
         {
             if (_curFlowGraph == null)
@@ -268,6 +280,8 @@ namespace Assets.Editor
             }
             else
             {
+                DrawMiniMap();
+
                 if (_curFlowGraph.NodeCount > 0)
                 {
                     Handles.BeginGUI();
@@ -370,6 +384,36 @@ namespace Assets.Editor
             GUILayout.EndScrollView();
         }
 
+        void DrawMiniMap()
+        {
+            if (!_bMainDragging) return;
+
+            Color preColor = GUI.color;
+            Color mapColor = GUI.color * new Color(1f, 1f, 1f, 0.05f);
+
+            Vector2 mapCenter = new Vector2(_rectMain.x + _rectMain.width * 0.15f, _rectMain.y + _rectMain.height * 0.15f);
+            mapCenter.x -= _rectMain.width * fMiniMapScale / 2f;
+            mapCenter.y -= _rectMain.height * fMiniMapScale / 2f;
+
+            GUI.color = mapColor;
+
+            GUI.Box(new Rect(mapCenter.x, mapCenter.y, _rectMain.width * fMiniMapScale, _rectMain.height * fMiniMapScale), "");
+
+            foreach (FlowNode node in _curFlowGraph.NodeList)
+            {
+                Rect rect = node.GetRectInGraph(_curFlowGraph);
+                Vector2 nodeCenter = new Vector2(rect.x, rect.y);
+                Vector2 nodeSize = new Vector2(rect.width, rect.height);
+                nodeCenter *= fMiniMapScale;
+                nodeSize *= fMiniMapScale;
+                nodeCenter += mapCenter;
+                GUI.color = node.color;
+                GUI.Box(new Rect(nodeCenter.x, nodeCenter.y, nodeSize.x, nodeSize.y), GUIContent.none);
+            }
+
+            GUI.color = preColor;
+        }
+
         void DrawObjectField()
         {
             Object newSelectAsset = EditorGUILayout.ObjectField(_selectAsset, typeof(Object), false);
@@ -458,6 +502,7 @@ namespace Assets.Editor
 
             return false;
         }
+        #endregion
 
         void MoveSplitter(float deltaX)
         {
