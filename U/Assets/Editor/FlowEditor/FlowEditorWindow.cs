@@ -48,8 +48,8 @@ namespace Assets.Editor
         private FlowNode _curSelectFlowNode;
         private FlowNode _curLinkingFlowNode;
 
-        private string _assetPath = "";
-        private Object _selectAsset;
+        private string _curAssetPath = "";
+        private Object _curSelectAsset;
 
         [MenuItem("Window/Flow Editor", priority = 3)]
         public static FlowEditorWindow Open()
@@ -264,7 +264,7 @@ namespace Assets.Editor
             object[] argArray = args as object[];
             FlowNodeType type = (FlowNodeType)argArray[0];
             Vector2 mousePosition = (Vector2)argArray[1];
-            FlowNode.CreateInGraph(_curFlowGraph, type, _curFlowGraph.NodeNextID, new Vector2(mousePosition.x, mousePosition.y));
+            FlowNode.CreateFromGraph(_curFlowGraph, type, _curFlowGraph.NodeNextID, new Vector2(mousePosition.x, mousePosition.y));
         }
         #endregion
 
@@ -378,7 +378,7 @@ namespace Assets.Editor
             {
                 if (_curSelectFlowNode != null)
                 {
-                    _curSelectFlowNode.OnDrawProperty();
+                    _curSelectFlowNode.OnDrawProperty(_curFlowGraph);
                 }
             }
             GUILayout.EndScrollView();
@@ -416,9 +416,9 @@ namespace Assets.Editor
 
         void DrawObjectField()
         {
-            Object newSelectAsset = EditorGUILayout.ObjectField(_selectAsset, typeof(Object), false);
+            Object newSelectAsset = EditorGUILayout.ObjectField(_curSelectAsset, typeof(Object), false);
 
-            if (newSelectAsset != _selectAsset)
+            if (newSelectAsset != _curSelectAsset)
             {
                 if (newSelectAsset != null)
                 {
@@ -537,23 +537,23 @@ namespace Assets.Editor
 
         void ClearGraph()
         {
-            _selectAsset = null;
+            _curSelectAsset = null;
             _curFlowGraph = null;
-            _assetPath = "";
+            _curAssetPath = "";
         }
 
         public void CreateGraph(Object asset)
         {
-            _selectAsset = asset;
-            _assetPath = AssetDatabase.GetAssetPath(_selectAsset);
-            _curFlowGraph = FlowGraph.LoadFromAsset(_selectAsset);
+            _curSelectAsset = asset;
+            _curAssetPath = AssetDatabase.GetAssetPath(_curSelectAsset);
+            _curFlowGraph = FlowGraph.LoadFromAsset(_curSelectAsset);
         }
 
         void SaveGraph()
         {
             if (_curFlowGraph != null)
             {
-                if (_selectAsset == null)
+                if (_curSelectAsset == null)
                 {
                     string path = EditorUtility.SaveFilePanel(
                         "Save flow graph as asset",
@@ -563,13 +563,13 @@ namespace Assets.Editor
 
                     if (path.Length > 0)
                     {
-                        _assetPath = sGraphFilePath + Path.GetFileName(path);
-                        _selectAsset = _curFlowGraph.Save(_assetPath, true);
+                        _curAssetPath = sGraphFilePath + Path.GetFileName(path);
+                        _curSelectAsset = _curFlowGraph.Save(_curAssetPath, true);
                     }
                 }
                 else
                 {
-                    _curFlowGraph.Save(_assetPath, false);
+                    _curFlowGraph.Save(_curAssetPath, false);
                 }
 
                 AssetDatabase.SaveAssets();

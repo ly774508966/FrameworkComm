@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using UnityEngine;
+using UnityEditor;
 
 /// <summary>
 /// @zhenhaiwang
@@ -17,13 +18,9 @@ namespace Assets.Editor
             get { return 180f; }
         }
 
-        public string sDescription;
-
-        public override void OnDrawProperty()
+        public override void OnDrawProperty(FlowGraph graph)
         {
-            base.OnDrawProperty();
-
-            sDescription = EditorGUILayout.TextField("Description", sDescription);
+            base.OnDrawProperty(graph);
         }
     }
 }

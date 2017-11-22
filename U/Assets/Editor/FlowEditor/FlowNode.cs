@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Newtonsoft.Json;
 
 /// <summary>
 /// @zhenhaiwang
@@ -14,6 +16,13 @@ namespace Assets.Editor
         Normal,
         End,
         Count,
+    }
+
+    public enum FlowNodeState
+    {
+        Wait = 0,
+        Execute,
+        Finish,
     }
 
     public class FlowNode
@@ -33,50 +42,123 @@ namespace Assets.Editor
             get { return 50f; }
         }
 
-        public FlowNodeType type = FlowNodeType.None;
-        public int id = 0;
-        public Vector2 position = Vector2.zero;
-        public float[] color = new float[4];
-        public List<int> linkList = new List<int>();
+        // Serialized
+        public FlowNodeType type;
+        public int id;
+        public Vector2 position;
+        public float[] color;
+        public List<int> linkList;
+        public string description;
 
-        public static FlowNode Create(FlowNodeType type, int id, Vector2 position)
+        // Non Serialized
+        private GameObject _target = null;
+        private FlowNodeState _state = FlowNodeState.Wait;
+
+        #region Create Node
+        private static FlowNode CreateOrLoadFromJson(FlowNodeType type, string json = null)
         {
             FlowNode node = null;
+
+            bool fromJson = !string.IsNullOrEmpty(json);
 
             switch (type)
             {
                 case FlowNodeType.Start:
                     {
-                        node = new StartNode();
+                        if (fromJson)
+                        {
+                            node = JsonConvert.DeserializeObject<StartNode>(json) as StartNode;
+                        }
+                        else
+                        {
+                            node = new StartNode();
+                        }
                     }
                     break;
                 case FlowNodeType.Normal:
                     {
-                        node = new NormalNode();
+                        if (fromJson)
+                        {
+                            node = JsonConvert.DeserializeObject<NormalNode>(json) as NormalNode;
+                        }
+                        else
+                        {
+                            node = new NormalNode();
+                        }
                     }
                     break;
                 case FlowNodeType.End:
                     {
-                        node = new EndNode();
+                        if (fromJson)
+                        {
+                            node = JsonConvert.DeserializeObject<EndNode>(json) as EndNode;
+                        }
+                        else
+                        {
+                            node = new EndNode();
+                        }
                     }
                     break;
             }
 
-            node.type = type;
-            node.id = id;
-            node.position = position;
-            node.color = new float[] { 1f, 1f, 1f, 1f };
+            if (!fromJson)
+            {
+                node.type = type;
+                node.color = new float[] { 1f, 1f, 1f, 1f };
+                node.linkList = new List<int>();
+                node.description = "";
+            }
 
             return node;
         }
 
-        public static FlowNode CreateInGraph(FlowGraph graph, FlowNodeType type, int id, Vector2 position)
+        private static FlowNode Create(FlowNodeType type, int id, Vector2 position)
+        {
+            FlowNode node = CreateOrLoadFromJson(type);
+
+            node.id = id;
+            node.position = position;
+
+            return node;
+        }
+
+        public static FlowNode CreateFromJson(string json)
+        {
+            FlowNode node = JsonConvert.DeserializeObject<FlowNode>(json) as FlowNode;
+            return CreateOrLoadFromJson(node.type, json);
+        }
+
+        public static FlowNode CreateFromGraph(FlowGraph graph, FlowNodeType type, int id, Vector2 position)
         {
             FlowNode node = Create(type, id, position);
             node.SetRectInGraph(graph, node.position);
             graph.AddNode(node);
             return node;
         }
+        #endregion
+
+        #region Graph Process
+        public virtual IEnumerator Execute()
+        {
+            _state = FlowNodeState.Execute;
+            yield return null;
+        }
+
+        public void Finish()
+        {
+            _state = FlowNodeState.Finish;
+        }
+
+        public FlowNodeState GetCurState()
+        {
+            return _state;
+        }
+
+        public virtual bool CanExecute()
+        {
+            return true;
+        }
+        #endregion
 
         public Rect GetRectInGraph(FlowGraph graph)
         {
@@ -117,11 +199,24 @@ namespace Assets.Editor
             this.color[3] = color.a;
         }
 
-        public virtual void OnDrawProperty()
+        public GameObject GetTargetGameObject()
         {
-            GUILayout.Label(NodeName, EditorStyles.boldLabel);
+            return _target;
+        }
+
+        public void SetTargetGameObject(GameObject target)
+        {
+            _target = target;
+        }
+
+        public virtual void OnDrawProperty(FlowGraph graph)
+        {
+            GUILayout.Label(NodeName, EditorStyles.whiteLargeLabel);
             EditorGUILayout.Space();
-            SetColor(EditorGUILayout.ColorField("Node Color", GetColor()));
+            SetColor(EditorGUILayout.ColorField("Color", GetColor()));
+            _target = EditorGUILayout.ObjectField("Target", _target, typeof(GameObject), false) as GameObject;
+            description = EditorGUILayout.TextField("Description", description);
+            EditorGUILayout.Space();
         }
     }
 }

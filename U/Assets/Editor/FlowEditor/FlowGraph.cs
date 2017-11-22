@@ -10,9 +10,15 @@ namespace Assets.Editor
 {
     public class FlowGraph : ScriptableObject
     {
-        public List<string> nodeJson;
+        // Serialized
+        [HideInInspector]
+        public List<string> nodeJsonList;
+        [HideInInspector]
+        public List<GameObject> targetList;
+        [HideInInspector]
         public Vector2 graphOffset;
 
+        // Non Serialized
         private List<FlowNode> _nodeList = new List<FlowNode>();
         private int _nodeNextID = 0;
 
@@ -37,11 +43,6 @@ namespace Assets.Editor
 
                 return _nodeNextID++;
             }
-        }
-
-        public void Open()
-        {
-            Debug.Log("111111111111111");
         }
 
         public void AddNode(FlowNode node)
@@ -73,34 +74,17 @@ namespace Assets.Editor
         {
             FlowGraph graph = AssetDatabase.LoadAssetAtPath(AssetDatabase.GetAssetPath(graphAsset), typeof(FlowGraph)) as FlowGraph;
 
-            if (graph != null && graph.nodeJson != null)
+            if (graph != null && graph.nodeJsonList != null)
             {
                 graph._nodeNextID = 0;
                 graph._nodeList.Clear();
 
-                foreach (string json in graph.nodeJson)
+                int index = 0;
+
+                foreach (string json in graph.nodeJsonList)
                 {
-                    FlowNode node = JsonConvert.DeserializeObject<FlowNode>(json) as FlowNode;
-
-                    switch (node.type)
-                    {
-                        case FlowNodeType.Start:
-                            {
-                                node = JsonConvert.DeserializeObject<StartNode>(json) as StartNode;
-                            }
-                            break;
-                        case FlowNodeType.Normal:
-                            {
-                                node = JsonConvert.DeserializeObject<NormalNode>(json) as NormalNode;
-                            }
-                            break;
-                        case FlowNodeType.End:
-                            {
-                                node = JsonConvert.DeserializeObject<EndNode>(json) as EndNode;
-                            }
-                            break;
-                    }
-
+                    FlowNode node = FlowNode.CreateFromJson(json);
+                    node.SetTargetGameObject(graph.targetList[index++]);
                     graph._nodeList.Add(node);
                 }
             }
@@ -110,11 +94,13 @@ namespace Assets.Editor
 
         public Object Save(string path, bool create)
         {
-            nodeJson = new List<string>();
+            nodeJsonList = new List<string>();
+            targetList = new List<GameObject>();
 
             foreach (FlowNode node in _nodeList)
             {
-                nodeJson.Add(JsonConvert.SerializeObject(node, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                nodeJsonList.Add(JsonConvert.SerializeObject(node, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                targetList.Add(node.GetTargetGameObject());
             }
 
             if (create)

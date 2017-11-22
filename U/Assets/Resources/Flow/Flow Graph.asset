@@ -11,10 +11,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aad80118c943580448a571d4ea7e10c4, type: 3}
   m_Name: Flow Graph
   m_EditorClassIdentifier: 
-  nodeJson:
-  - '{"sDescription":null,"type":1,"id":1,"position":{"x":124.0,"y":283.0,"normalized":{"x":0.401328117,"y":0.9159343,"normalized":{"x":0.401328146,"y":0.9159344,"magnitude":1.0,"sqrMagnitude":1.00000012},"magnitude":0.99999994,"sqrMagnitude":0.99999994},"magnitude":308.974121,"sqrMagnitude":95465.0},"color":[1.0,1.0,1.0,1.0],"linkList":[5,2,3],"NodeName":"StartNode","NodeWidth":150.0,"NodeHeight":50.0}'
-  - '{"sDescription":null,"type":2,"id":2,"position":{"x":455.000031,"y":306.0,"normalized":{"x":0.8297989,"y":0.5580625,"normalized":{"x":0.829798937,"y":0.558062553,"magnitude":1.0,"sqrMagnitude":1.00000012},"magnitude":0.99999994,"sqrMagnitude":0.99999994},"magnitude":548.3257,"sqrMagnitude":300661.031},"color":[1.0,0.0,1.0,1.0],"linkList":[4],"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
-  - '{"sDescription":null,"type":2,"id":3,"position":{"x":454.000031,"y":512.0,"normalized":{"x":0.6634563,"y":0.748215,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":684.2953,"sqrMagnitude":468260.031},"color":[1.0,1.0,0.0,1.0],"linkList":[4],"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
-  - '{"sDescription":null,"type":3,"id":4,"position":{"x":817.0,"y":282.0,"normalized":{"x":0.9452746,"y":0.326275915,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":864.299133,"sqrMagnitude":747013.0},"color":[0.0,1.0,0.0,1.0],"linkList":[],"NodeName":"EndNode","NodeWidth":120.0,"NodeHeight":50.0}'
-  - '{"sDescription":null,"type":2,"id":5,"position":{"x":452.000031,"y":76.0,"normalized":{"x":0.98615706,"y":0.165814,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":458.344879,"sqrMagnitude":210080.031},"color":[0.0,1.0,1.0,1.0],"linkList":[4],"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
-  graphOffset: {x: -5, y: 50}
+  nodeJsonList:
+  - '{"type":1,"id":1,"position":{"x":117.0,"y":334.0,"normalized":{"x":0.330602169,"y":0.94377023,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":353.8997,"sqrMagnitude":125245.0},"color":[1.0,1.0,1.0,1.0],"linkList":[2,3],"description":"","NodeName":"StartNode","NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"type":2,"id":2,"position":{"x":443.0,"y":176.0,"normalized":{"x":0.9293422,"y":0.369219482,"normalized":{"x":0.92934227,"y":0.3692195,"magnitude":1.0,"sqrMagnitude":1.00000012},"magnitude":0.99999994,"sqrMagnitude":0.99999994},"magnitude":476.681244,"sqrMagnitude":227225.0},"color":[0.0,1.0,0.0,1.0],"linkList":[],"description":"Text","NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
+  - '{"type":2,"id":3,"position":{"x":442.0,"y":480.0,"normalized":{"x":0.6773885,"y":0.7356255,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":652.5059,"sqrMagnitude":425764.0},"color":[0.0,1.0,1.0,1.0],"linkList":[4],"description":"Normal","NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
+  - '{"type":3,"id":4,"position":{"x":828.0,"y":333.0,"normalized":{"x":0.927779555,"y":0.373128742,"normalized":{"x":0.9277796,"y":0.373128772,"magnitude":1.0,"sqrMagnitude":1.00000012},"magnitude":0.99999994,"sqrMagnitude":0.99999994},"magnitude":892.453369,"sqrMagnitude":796473.0},"color":[1.0,1.0,1.0,1.0],"linkList":[],"description":"","NodeName":"EndNode","NodeWidth":120.0,"NodeHeight":50.0}'
+  targetList:
+  - {fileID: 0}
+  - {fileID: 1540637001497610, guid: 56caa0206fd16e045a03c98b7d87db55, type: 2}
+  - {fileID: 1540637001497610, guid: 56caa0206fd16e045a03c98b7d87db55, type: 2}
+  - {fileID: 0}
+  graphOffset: {x: 7, y: 86}

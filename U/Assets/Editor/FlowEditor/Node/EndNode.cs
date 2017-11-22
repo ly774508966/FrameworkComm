@@ -17,13 +17,9 @@ namespace Assets.Editor
             get { return 120f; }
         }
 
-        public string sDescription;
-
-        public override void OnDrawProperty()
+        public override void OnDrawProperty(FlowGraph graph)
         {
-            base.OnDrawProperty();
-
-            sDescription = EditorGUILayout.TextField("Description", sDescription);
+            base.OnDrawProperty(graph);
         }
     }
 }
