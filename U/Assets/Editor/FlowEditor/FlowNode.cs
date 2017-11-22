@@ -36,7 +36,7 @@ namespace Assets.Editor
         public FlowNodeType type = FlowNodeType.None;
         public int id = 0;
         public Vector2 position = Vector2.zero;
-        public Color color = Color.white;
+        public float[] color = new float[4];
         public List<int> linkList = new List<int>();
 
         public static FlowNode Create(FlowNodeType type, int id, Vector2 position)
@@ -65,7 +65,7 @@ namespace Assets.Editor
             node.type = type;
             node.id = id;
             node.position = position;
-            node.color = Color.white;
+            node.color = new float[] { 1f, 1f, 1f, 1f };
 
             return node;
         }
@@ -104,11 +104,24 @@ namespace Assets.Editor
             }
         }
 
-        public virtual void DrawProperty()
+        public Color GetColor()
+        {
+            return new Color(color[0], color[1], color[2], color[3]);
+        }
+
+        void SetColor(Color color)
+        {
+            this.color[0] = color.r;
+            this.color[1] = color.g;
+            this.color[2] = color.b;
+            this.color[3] = color.a;
+        }
+
+        public virtual void OnDrawProperty()
         {
             GUILayout.Label(NodeName, EditorStyles.boldLabel);
             EditorGUILayout.Space();
-            color = EditorGUILayout.ColorField("Node Color", color);
+            SetColor(EditorGUILayout.ColorField("Node Color", GetColor()));
         }
     }
 }

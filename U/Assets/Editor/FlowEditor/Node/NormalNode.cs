@@ -19,9 +19,9 @@ namespace Assets.Editor
 
         public string sDescription;
 
-        public override void DrawProperty()
+        public override void OnDrawProperty()
         {
-            base.DrawProperty();
+            base.OnDrawProperty();
 
             sDescription = EditorGUILayout.TextField("Description", sDescription);
         }

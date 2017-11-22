@@ -10,7 +10,7 @@ namespace Assets.Editor
 {
     public class FlowGraph : ScriptableObject
     {
-        public List<string> nodeJsonList;
+        public List<string> nodeJson;
         public Vector2 graphOffset;
 
         private List<FlowNode> _nodeList = new List<FlowNode>();
@@ -37,6 +37,11 @@ namespace Assets.Editor
 
                 return _nodeNextID++;
             }
+        }
+
+        public void Open()
+        {
+            Debug.Log("111111111111111");
         }
 
         public void AddNode(FlowNode node)
@@ -68,12 +73,12 @@ namespace Assets.Editor
         {
             FlowGraph graph = AssetDatabase.LoadAssetAtPath(AssetDatabase.GetAssetPath(graphAsset), typeof(FlowGraph)) as FlowGraph;
 
-            if (graph != null && graph.nodeJsonList != null)
+            if (graph != null && graph.nodeJson != null)
             {
                 graph._nodeNextID = 0;
                 graph._nodeList.Clear();
 
-                foreach (string json in graph.nodeJsonList)
+                foreach (string json in graph.nodeJson)
                 {
                     FlowNode node = JsonConvert.DeserializeObject<FlowNode>(json) as FlowNode;
 
@@ -105,11 +110,11 @@ namespace Assets.Editor
 
         public Object Save(string path, bool create)
         {
-            nodeJsonList = new List<string>();
+            nodeJson = new List<string>();
 
             foreach (FlowNode node in _nodeList)
             {
-                nodeJsonList.Add(JsonConvert.SerializeObject(node, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
+                nodeJson.Add(JsonConvert.SerializeObject(node, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
             }
 
             if (create)

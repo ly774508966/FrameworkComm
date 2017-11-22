@@ -344,7 +344,7 @@ namespace Assets.Editor
                         }
                         else
                         {
-                            GUI.color = node.color;
+                            GUI.color = node.GetColor();
                         }
 
                         rect = GUI.Window(node.id, rect, DrawNode, node.NodeName);
@@ -378,7 +378,7 @@ namespace Assets.Editor
             {
                 if (_curSelectFlowNode != null)
                 {
-                    _curSelectFlowNode.DrawProperty();
+                    _curSelectFlowNode.OnDrawProperty();
                 }
             }
             GUILayout.EndScrollView();
@@ -407,7 +407,7 @@ namespace Assets.Editor
                 nodeCenter *= fMiniMapScale;
                 nodeSize *= fMiniMapScale;
                 nodeCenter += mapCenter;
-                GUI.color = node.color;
+                GUI.color = node.GetColor();
                 GUI.Box(new Rect(nodeCenter.x, nodeCenter.y, nodeSize.x, nodeSize.y), GUIContent.none);
             }
 
