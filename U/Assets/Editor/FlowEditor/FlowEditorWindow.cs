@@ -435,9 +435,13 @@ namespace Assets.Editor
         {
             FlowNode node = _curFlowGraph.GetNode(id);
 
-            if (GUI.Button(new Rect(node.NodeWidth - fLinkIconWidth, 0f, fLinkIconWidth, fLinkIconWidth), new GUIContent(texLinkout), iconButtonStyle))
+
+            if (node.type != FlowNodeType.End)
             {
-                _curLinkingFlowNode = node;
+                if (GUI.Button(new Rect(node.NodeWidth - fLinkIconWidth, 0f, fLinkIconWidth, fLinkIconWidth), new GUIContent(texLinkout), iconButtonStyle))
+                {
+                    _curLinkingFlowNode = node;
+                }
             }
 
             if (node.type != FlowNodeType.Start)
