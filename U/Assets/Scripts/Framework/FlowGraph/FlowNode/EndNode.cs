@@ -3,7 +3,7 @@
 /// <summary>
 /// @zhenhaiwang
 /// </summary>
-namespace Assets.Editor
+namespace Framework
 {
     public class EndNode : FlowNode
     {

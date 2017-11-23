@@ -6,7 +6,7 @@ using Framework.UI;
 /// <summary>
 /// @zhenhaiwang
 /// </summary>
-namespace Assets.Editor
+namespace Framework.Editor
 {
     [CanEditMultipleObjects, CustomEditor(typeof(UICircleImage), true)]
     public class UICircleImageEditor : ImageEditor

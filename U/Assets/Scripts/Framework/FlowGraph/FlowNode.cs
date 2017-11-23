@@ -7,26 +7,17 @@ using Newtonsoft.Json;
 /// <summary>
 /// @zhenhaiwang
 /// </summary>
-namespace Assets.Editor
+namespace Framework
 {
-    public enum FlowNodeType
-    {
-        None = 0,
-        Start,
-        Normal,
-        End,
-        Count,
-    }
-
-    public enum FlowNodeState
-    {
-        Wait = 0,
-        Execute,
-        Finish,
-    }
-
     public class FlowNode
     {
+        public enum State
+        {
+            Wait = 0,
+            Execute,
+            Finish,
+        }
+
         public virtual string NodeName
         {
             get { return "FlowNode"; }
@@ -52,7 +43,7 @@ namespace Assets.Editor
 
         // Non Serialized
         private GameObject _target = null;
-        private FlowNodeState _state = FlowNodeState.Wait;
+        private State _state = State.Wait;
 
         #region Create Node
         private static FlowNode CreateOrLoadFromJson(FlowNodeType type, string json = null)
@@ -140,21 +131,21 @@ namespace Assets.Editor
         #region Graph Process
         public virtual IEnumerator Execute()
         {
-            _state = FlowNodeState.Execute;
+            _state = State.Execute;
             yield return null;
         }
 
         public void Finish()
         {
-            _state = FlowNodeState.Finish;
+            _state = State.Finish;
         }
 
-        public FlowNodeState GetCurState()
+        public State GetCurState()
         {
             return _state;
         }
 
-        public virtual bool CanExecute()
+        public virtual bool CheckExecutable()
         {
             return true;
         }
@@ -206,17 +197,29 @@ namespace Assets.Editor
 
         public void SetTargetGameObject(GameObject target)
         {
-            _target = target;
+            if (type > FlowNodeType.Start && type < FlowNodeType.End)
+            {
+                _target = target;
+            }
+            else
+            {
+                _target = null;
+            }
         }
 
         public virtual void OnDrawProperty(FlowGraph graph)
         {
             GUILayout.Label(NodeName, EditorStyles.whiteLargeLabel);
+
             EditorGUILayout.Space();
-            SetColor(EditorGUILayout.ColorField("Color", GetColor()));
-            _target = EditorGUILayout.ObjectField("Target", _target, typeof(GameObject), false) as GameObject;
-            description = EditorGUILayout.TextField("Description", description);
-            EditorGUILayout.Space();
+
+            if (type > FlowNodeType.Start && type < FlowNodeType.End)
+            {
+                SetColor(EditorGUILayout.ColorField("Color", GetColor()));
+                _target = EditorGUILayout.ObjectField("Target", _target, typeof(GameObject), false) as GameObject;
+                description = EditorGUILayout.TextField("Description", description);
+                EditorGUILayout.Space();
+            }
         }
     }
 }

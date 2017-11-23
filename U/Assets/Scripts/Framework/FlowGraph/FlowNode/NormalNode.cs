@@ -1,20 +1,21 @@
-﻿using UnityEditor;
+﻿using UnityEngine;
+using UnityEditor;
 
 /// <summary>
 /// @zhenhaiwang
 /// </summary>
-namespace Assets.Editor
+namespace Framework
 {
-    public class StartNode : FlowNode
+    public class NormalNode : FlowNode
     {
         public override string NodeName
         {
-            get { return "StartNode"; }
+            get { return "NormalNode"; }
         }
 
         public override float NodeWidth
         {
-            get { return 150f; }
+            get { return 180f; }
         }
 
         public override void OnDrawProperty(FlowGraph graph)

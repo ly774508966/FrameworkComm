@@ -4,7 +4,7 @@ using UnityEditor;
 /// <summary>
 /// @zhenhaiwang
 /// </summary>
-namespace Assets.Editor
+namespace Framework.Editor
 {
     [CustomEditor(typeof(FlowGraph))]
     public class FlowGraphInspector : UnityEditor.Editor

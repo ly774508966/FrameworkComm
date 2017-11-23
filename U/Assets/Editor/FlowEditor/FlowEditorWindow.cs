@@ -7,13 +7,13 @@ using UnityEditor;
 /// 流式编辑器
 /// @zhenhaiwang
 /// </summary>
-namespace Assets.Editor
+namespace Framework.Editor
 {
     public class FlowEditorWindow : EditorWindow
     {
         // Path
-        private const string sResourcePath = "Assets/Editor/FlowEditor/__Resources/";
         private const string sGraphFilePath = "Assets/Resources/Flow/";
+        private const string sResourcePath = "Assets/Editor/FlowEditor/__Resources/";
         // Window
         private const float fWindowMinWidth = 1280f;
         private const float fWindowMinHeight = 720f;
@@ -251,7 +251,7 @@ namespace Assets.Editor
 
             GenericMenu menu = new GenericMenu();
 
-            for (FlowNodeType type = FlowNodeType.None + 1; type < FlowNodeType.Count; type++)
+            for (FlowNodeType type = FlowNodeType.Start; type < FlowNodeType.Count; type++)
             {
                 menu.AddItem(new GUIContent(type.ToString()), false, HandleClickMenuItem, new object[] { type, Event.current.mousePosition });
             }

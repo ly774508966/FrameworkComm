@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 /// <summary>
 /// @zhenhaiwang
 /// </summary>
-namespace Assets.Editor
+namespace Framework
 {
     public class FlowGraph : ScriptableObject
     {
@@ -70,9 +70,29 @@ namespace Assets.Editor
             _nodeList.Remove(node);
         }
 
-        public static FlowGraph LoadFromAsset(Object graphAsset)
+        public List<FlowNode> GetStartNodes()
         {
-            FlowGraph graph = AssetDatabase.LoadAssetAtPath(AssetDatabase.GetAssetPath(graphAsset), typeof(FlowGraph)) as FlowGraph;
+            List<FlowNode> startNodeList = null;
+
+            foreach (FlowNode node in _nodeList)
+            {
+                if (node.type == FlowNodeType.Start)
+                {
+                    if (startNodeList == null)
+                    {
+                        startNodeList = new List<FlowNode>();
+                    }
+
+                    startNodeList.Add(node);
+                }
+            }
+
+            return startNodeList;
+        }
+
+        public static FlowGraph Load(string path)
+        {
+            FlowGraph graph = AssetDatabase.LoadAssetAtPath<FlowGraph>(path);
 
             if (graph != null && graph.nodeJsonList != null)
             {
@@ -90,6 +110,11 @@ namespace Assets.Editor
             }
 
             return graph;
+        }
+
+        public static FlowGraph LoadFromAsset(Object graphAsset)
+        {
+            return Load(AssetDatabase.GetAssetPath(graphAsset));
         }
 
         public Object Save(string path, bool create)

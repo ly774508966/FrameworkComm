@@ -9,7 +9,7 @@ using Object = UnityEngine.Object;
 /// 资源引用检查工具
 /// @zhenhaiwang
 /// </summary>
-namespace Assets.Editor
+namespace Framework.Editor
 {
     public sealed class AssetCheckerWindow : EditorWindow
     {

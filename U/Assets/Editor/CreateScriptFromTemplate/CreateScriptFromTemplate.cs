@@ -8,7 +8,7 @@ using System.Linq;
 /// <summary>
 /// @zhenhaiwang
 /// </summary>
-namespace Assets.Editor
+namespace Framework.Editor
 {
     public class CreateScriptFromTemplate : EditorWindow
     {
