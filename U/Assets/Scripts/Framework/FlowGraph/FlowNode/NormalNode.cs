@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEditor;
 
 /// <summary>
@@ -18,9 +19,26 @@ namespace Framework
             get { return 180f; }
         }
 
-        public override void OnDrawProperty(FlowGraph graph)
+        public override float NodeHeight
         {
-            base.OnDrawProperty(graph);
+            get { return 50f; }
+        }
+
+        public override void OnDrawProperty()
+        {
+            base.OnDrawProperty();
+        }
+
+        public override void OnDrawNode()
+        {
+            base.OnDrawNode();
+        }
+
+        public override IEnumerator OnExecute()
+        {
+            yield return base.OnExecute();
+            Log.Debug(string.Format("{0} execute finish, delay {1}s", NodeName, delay));
+            FinishExecute();
         }
     }
 }

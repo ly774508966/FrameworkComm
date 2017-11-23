@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -33,17 +34,22 @@ namespace Framework
             get { return 50f; }
         }
 
-        // Serialized
         public FlowNodeType type;
         public int id;
-        public Vector2 position;
+        public float x;
+        public float y;
         public float[] color;
         public List<int> linkList;
-        public string description;
+        public List<int> preList;
+        public float delay;
+        public bool wait;
 
-        // Non Serialized
+        [NonSerialized]
         private GameObject _target = null;
+        [NonSerialized]
         private State _state = State.Wait;
+        [NonSerialized]
+        private int _preFinishCount = 0;
 
         #region Create Node
         private static FlowNode CreateOrLoadFromJson(FlowNodeType type, string json = null)
@@ -97,7 +103,9 @@ namespace Framework
                 node.type = type;
                 node.color = new float[] { 1f, 1f, 1f, 1f };
                 node.linkList = new List<int>();
-                node.description = "";
+                node.preList = new List<int>();
+                node.delay = 0f;
+                node.wait = true;
             }
 
             return node;
@@ -108,7 +116,8 @@ namespace Framework
             FlowNode node = CreateOrLoadFromJson(type);
 
             node.id = id;
-            node.position = position;
+            node.x = position.x;
+            node.y = position.y;
 
             return node;
         }
@@ -122,22 +131,26 @@ namespace Framework
         public static FlowNode CreateFromGraph(FlowGraph graph, FlowNodeType type, int id, Vector2 position)
         {
             FlowNode node = Create(type, id, position);
-            node.SetRectInGraph(graph, node.position);
+            node.SetRectInGraph(graph, node.x, node.y);
             graph.AddNode(node);
             return node;
         }
         #endregion
 
         #region Graph Process
-        public virtual IEnumerator Execute()
+        public virtual IEnumerator OnExecute()
         {
-            _state = State.Execute;
-            yield return null;
+            if (delay > 0f)
+            {
+                yield return new WaitForSeconds(delay);
+            }
+
+            yield break;
         }
 
-        public void Finish()
+        public virtual bool CheckExecutable()
         {
-            _state = State.Finish;
+            return true;
         }
 
         public State GetCurState()
@@ -145,35 +158,115 @@ namespace Framework
             return _state;
         }
 
-        public virtual bool CheckExecutable()
+        public bool StartExecute()
         {
-            return true;
+            if (_state != State.Wait)
+            {
+                return false;
+            }
+
+            if (wait && preList != null)
+            {
+                _preFinishCount++;
+
+                if (_preFinishCount >= preList.Count)
+                {
+                    _state = State.Execute;
+                    return true;
+                }
+            }
+            else
+            {
+                _state = State.Execute;
+                return true;
+            }
+
+            return false;
+        }
+
+        public void FinishExecute()
+        {
+            _state = State.Finish;
+        }
+        #endregion
+
+        #region On Draw
+        public virtual void OnDrawProperty()
+        {
+            GUILayout.Label(NodeName, EditorStyles.whiteLargeLabel);
+
+            EditorGUILayout.Space();
+
+            if (type == FlowNodeType.Start)
+            {
+                delay = EditorGUILayout.FloatField("Delay", delay);
+            }
+            else if (type == FlowNodeType.End)
+            {
+                wait = EditorGUILayout.Toggle("Wait", wait);
+            }
+            else
+            {
+                SetColor(EditorGUILayout.ColorField("Color", GetColor()));
+                _target = EditorGUILayout.ObjectField("Target", _target, typeof(GameObject), false) as GameObject;
+                delay = EditorGUILayout.FloatField("Delay", delay);
+                wait = EditorGUILayout.Toggle("Wait", wait);
+            }
+
+            EditorGUILayout.Space();
+        }
+
+        public virtual void OnDrawNode()
+        {
+
         }
         #endregion
 
         public Rect GetRectInGraph(FlowGraph graph)
         {
-            return new Rect(position.x + graph.graphOffset.x, position.y + graph.graphOffset.y, NodeWidth, NodeHeight);
+            return new Rect(x + graph.graphOffset.x, y + graph.graphOffset.y, NodeWidth, NodeHeight);
         }
 
         public void SetRectInGraph(FlowGraph graph, Vector2 position)
         {
-            this.position = new Vector2(position.x - graph.graphOffset.x, position.y - graph.graphOffset.y);
+            SetRectInGraph(graph, position.x, position.y);
         }
 
-        public void AddLinkNode(FlowNode node)
+        public void SetRectInGraph(FlowGraph graph, float xPos, float yPos)
         {
-            if (node != this && !linkList.Contains(node.id))
+            x = xPos - graph.graphOffset.x;
+            y = yPos - graph.graphOffset.y;
+        }
+
+        public void AddLinkNode(FlowNode linkNode)
+        {
+            if (linkNode != this && !linkList.Contains(linkNode.id))
             {
-                linkList.Add(node.id);
+                linkList.Add(linkNode.id);
             }
         }
 
-        public void RemoveLinkNode(FlowNode node)
+        public void RemoveLinkNode(FlowNode linkNode)
         {
-            if (linkList.Contains(node.id))
+            if (linkList.Contains(linkNode.id))
             {
-                linkList.Remove(node.id);
+                linkList.Remove(linkNode.id);
+            }
+        }
+
+        public void AddPreNode(FlowNode preNode)
+        {
+            if (preNode != this && !preList.Contains(preNode.id))
+            {
+                preList.Add(preNode.id);
+            }
+        }
+
+        public void RemovePreNode(FlowNode preNode)
+        {
+            if (preList.Contains(preNode.id))
+            {
+                preList.Remove(preNode.id);
             }
         }
 
@@ -182,7 +275,7 @@ namespace Framework
             return new Color(color[0], color[1], color[2], color[3]);
         }
 
-        void SetColor(Color color)
+        private void SetColor(Color color)
         {
             this.color[0] = color.r;
             this.color[1] = color.g;
@@ -204,21 +297,6 @@ namespace Framework
             else
             {
                 _target = null;
-            }
-        }
-
-        public virtual void OnDrawProperty(FlowGraph graph)
-        {
-            GUILayout.Label(NodeName, EditorStyles.whiteLargeLabel);
-
-            EditorGUILayout.Space();
-
-            if (type > FlowNodeType.Start && type < FlowNodeType.End)
-            {
-                SetColor(EditorGUILayout.ColorField("Color", GetColor()));
-                _target = EditorGUILayout.ObjectField("Target", _target, typeof(GameObject), false) as GameObject;
-                description = EditorGUILayout.TextField("Description", description);
-                EditorGUILayout.Space();
             }
         }
     }

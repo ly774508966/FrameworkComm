@@ -31,6 +31,7 @@ namespace Framework.Editor
         // GUIStyle
         private static GUISkin windowSkin;
         private static GUIStyle iconButtonStyle;
+        private static Color nodeSelectedColor = Color.red;
         // Rect
         private Rect _rectMain = new Rect(0f, 0f, fWindowMinWidth - fInspectorMinWidth - fSplitterWidth, fWindowMinHeight);
         private Rect _rectInspector = new Rect(fWindowMinWidth - fInspectorMinWidth, 0f, fInspectorMinWidth, fWindowMinHeight);
@@ -314,6 +315,7 @@ namespace Framework.Editor
                         if (deleteNode != null)
                         {
                             node.RemoveLinkNode(deleteNode);
+                            deleteNode.RemovePreNode(node);
                         }
                     }
 
@@ -327,6 +329,7 @@ namespace Framework.Editor
                 for (int i = 0; i < nodeCount; i++)
                 {
                     FlowNode node = nodeList[i];
+
                     Rect rect = node.GetRectInGraph(_curFlowGraph);
                     Vector2 topLeft = new Vector2(rect.x, rect.y);
                     Vector2 topRight = new Vector2(rect.x + node.NodeWidth, rect.y);
@@ -340,7 +343,7 @@ namespace Framework.Editor
                     {
                         if (node == _curSelectFlowNode)
                         {
-                            GUI.color = Color.red;
+                            GUI.color = nodeSelectedColor;
                         }
                         else
                         {
@@ -378,7 +381,7 @@ namespace Framework.Editor
             {
                 if (_curSelectFlowNode != null)
                 {
-                    _curSelectFlowNode.OnDrawProperty(_curFlowGraph);
+                    _curSelectFlowNode.OnDrawProperty();
                 }
             }
             GUILayout.EndScrollView();
@@ -435,6 +438,7 @@ namespace Framework.Editor
         {
             FlowNode node = _curFlowGraph.GetNode(id);
 
+            node.OnDrawNode();
 
             if (node.type != FlowNodeType.End)
             {
@@ -451,6 +455,7 @@ namespace Framework.Editor
                     if (_curLinkingFlowNode != null)
                     {
                         _curLinkingFlowNode.AddLinkNode(node);
+                        node.AddPreNode(_curLinkingFlowNode);
                         _curLinkingFlowNode = null;
                     }
                 }

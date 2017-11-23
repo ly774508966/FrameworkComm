@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Newtonsoft.Json;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// @zhenhaiwang
@@ -10,7 +12,6 @@ namespace Framework
 {
     public class FlowGraph : ScriptableObject
     {
-        // Serialized
         [HideInInspector]
         public List<string> nodeJsonList;
         [HideInInspector]
@@ -18,9 +19,12 @@ namespace Framework
         [HideInInspector]
         public Vector2 graphOffset;
 
-        // Non Serialized
+        [NonSerialized]
         private List<FlowNode> _nodeList = new List<FlowNode>();
+        [NonSerialized]
         private int _nodeNextID = 0;
+        [NonSerialized]
+        private bool _valid = false;
 
         public List<FlowNode> NodeList
         {
@@ -45,6 +49,11 @@ namespace Framework
             }
         }
 
+        public bool Valid
+        {
+            get { return _valid; }
+        }
+
         public void AddNode(FlowNode node)
         {
             if (node == null)
@@ -65,48 +74,61 @@ namespace Framework
             foreach (FlowNode flowNode in _nodeList)
             {
                 flowNode.RemoveLinkNode(node);
+                node.RemovePreNode(flowNode);
             }
 
             _nodeList.Remove(node);
         }
 
-        public List<FlowNode> GetStartNodes()
+        public HashSet<FlowNode> GetStartNodes()
         {
-            List<FlowNode> startNodeList = null;
+            HashSet<FlowNode> startNodeHs = null;
 
             foreach (FlowNode node in _nodeList)
             {
                 if (node.type == FlowNodeType.Start)
                 {
-                    if (startNodeList == null)
+                    if (startNodeHs == null)
                     {
-                        startNodeList = new List<FlowNode>();
+                        startNodeHs = new HashSet<FlowNode>();
                     }
 
-                    startNodeList.Add(node);
+                    startNodeHs.Add(node);
                 }
             }
 
-            return startNodeList;
+            return startNodeHs;
+        }
+
+        public bool Initialize()
+        {
+            if (!_valid && nodeJsonList != null && targetList != null)
+            {
+                _nodeNextID = 0;
+                _nodeList.Clear();
+
+                int index = 0;
+
+                foreach (string json in nodeJsonList)
+                {
+                    FlowNode node = FlowNode.CreateFromJson(json);
+                    node.SetTargetGameObject(targetList[index++]);
+                    _nodeList.Add(node);
+                }
+
+                return _valid = true;
+            }
+
+            return false;
         }
 
         public static FlowGraph Load(string path)
         {
             FlowGraph graph = AssetDatabase.LoadAssetAtPath<FlowGraph>(path);
 
-            if (graph != null && graph.nodeJsonList != null)
+            if (graph != null)
             {
-                graph._nodeNextID = 0;
-                graph._nodeList.Clear();
-
-                int index = 0;
-
-                foreach (string json in graph.nodeJsonList)
-                {
-                    FlowNode node = FlowNode.CreateFromJson(json);
-                    node.SetTargetGameObject(graph.targetList[index++]);
-                    graph._nodeList.Add(node);
-                }
+                graph.Initialize();
             }
 
             return graph;

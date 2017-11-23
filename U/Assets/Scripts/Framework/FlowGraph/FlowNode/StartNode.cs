@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+﻿using System.Collections;
 
 /// <summary>
 /// @zhenhaiwang
@@ -12,14 +12,21 @@ namespace Framework
             get { return "StartNode"; }
         }
 
-        public override float NodeWidth
+        public override void OnDrawProperty()
         {
-            get { return 150f; }
+            base.OnDrawProperty();
         }
 
-        public override void OnDrawProperty(FlowGraph graph)
+        public override void OnDrawNode()
         {
-            base.OnDrawProperty(graph);
+            base.OnDrawNode();
+        }
+
+        public override IEnumerator OnExecute()
+        {
+            yield return base.OnExecute();
+            Log.Debug(string.Format("StartNode execute finish, delay {0}s", delay));
+            FinishExecute();
         }
     }
 }

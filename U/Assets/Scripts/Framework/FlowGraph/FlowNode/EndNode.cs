@@ -1,4 +1,4 @@
-﻿using UnityEditor;
+﻿using System.Collections;
 
 /// <summary>
 /// @zhenhaiwang
@@ -12,14 +12,21 @@ namespace Framework
             get { return "EndNode"; }
         }
 
-        public override float NodeWidth
+        public override void OnDrawProperty()
         {
-            get { return 120f; }
+            base.OnDrawProperty();
         }
 
-        public override void OnDrawProperty(FlowGraph graph)
+        public override void OnDrawNode()
         {
-            base.OnDrawProperty(graph);
+            base.OnDrawNode();
+        }
+
+        public override IEnumerator OnExecute()
+        {
+            yield return base.OnExecute();
+            Log.Debug("EndNode execute finish");
+            FinishExecute();
         }
     }
 }

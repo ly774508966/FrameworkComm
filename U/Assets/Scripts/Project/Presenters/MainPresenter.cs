@@ -10,11 +10,16 @@ namespace Project
 {
     public class MainPresenter : MonoBehaviour
     {
+        public FlowGraph graph;
+
         void Start()
         {
             Log.Debug("MainScene Start");
 
-            FlowGraphExecutor.Execute("Assets/Resources/Flow/Flow Graph.asset");
+            FlowGraphExecutor.Execute(graph, () =>
+            {
+                Log.Debug("FlowGraph execute finish");
+            });
         }
     }
 }
