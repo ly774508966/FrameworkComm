@@ -92,7 +92,7 @@ namespace Framework
 
                     if (curState == FlowNode.State.Wait)
                     {
-                        if (curNode.CheckExecutable() && curNode.StartExecute())    // bug!!!
+                        if (curNode.CheckExecutable() && curNode.StartExecute())
                         {
                             StartCoroutine(curNode.OnExecute());
                         }
@@ -113,6 +113,7 @@ namespace Framework
                                 FlowNode linkNode = _graph.GetNode(curNode.linkList[i]);
                                 if (linkNode.GetCurState() == FlowNode.State.Wait)
                                 {
+                                    linkNode.NotifyPreFinish();
                                     _nextNodeHs.Add(linkNode);
                                 }
                             }

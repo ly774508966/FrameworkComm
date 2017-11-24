@@ -153,6 +153,11 @@ namespace Framework
             return true;
         }
 
+        public void NotifyPreFinish()
+        {
+            _preFinishCount++;
+        }
+
         public State GetCurState()
         {
             return _state;
@@ -160,28 +165,19 @@ namespace Framework
 
         public bool StartExecute()
         {
-            if (_state != State.Wait)
-            {
-                return false;
-            }
-
             if (wait && preList != null)
             {
-                _preFinishCount++;
-
                 if (_preFinishCount >= preList.Count)
                 {
                     _state = State.Execute;
-                    return true;
                 }
             }
             else
             {
                 _state = State.Execute;
-                return true;
             }
 
-            return false;
+            return _state == State.Execute;
         }
 
         public void FinishExecute()

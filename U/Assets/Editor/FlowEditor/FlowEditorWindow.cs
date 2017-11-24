@@ -254,7 +254,11 @@ namespace Framework.Editor
 
             for (FlowNodeType type = FlowNodeType.Start; type < FlowNodeType.Count; type++)
             {
+                if (type == FlowNodeType.End) menu.AddSeparator("");
+
                 menu.AddItem(new GUIContent(type.ToString()), false, HandleClickMenuItem, new object[] { type, Event.current.mousePosition });
+
+                if (type == FlowNodeType.Start) menu.AddSeparator("");
             }
 
             menu.ShowAsContext();

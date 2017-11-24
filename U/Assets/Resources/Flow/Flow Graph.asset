@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Name: Flow Graph
   m_EditorClassIdentifier: 
   nodeJsonList:
-  - '{"type":0,"id":1,"x":-5.0,"y":195.0,"color":[1.0,1.0,1.0,1.0],"linkList":[2,3],"preList":[],"delay":1.0,"wait":true,"NodeName":"StartNode","NodeWidth":150.0,"NodeHeight":50.0}'
-  - '{"type":1,"id":2,"x":228.0,"y":100.0,"color":[1.0,1.0,1.0,1.0],"linkList":[5],"preList":[1],"delay":2.0,"wait":true,"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
-  - '{"type":1,"id":3,"x":233.0,"y":284.0,"color":[1.0,1.0,1.0,1.0],"linkList":[5],"preList":[1],"delay":5.0,"wait":true,"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
-  - '{"type":1,"id":5,"x":490.0,"y":193.0,"color":[1.0,1.0,1.0,1.0],"linkList":[6],"preList":[3,2],"delay":1.0,"wait":true,"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
-  - '{"type":2,"id":6,"x":740.0,"y":193.0,"color":[1.0,1.0,1.0,1.0],"linkList":[],"preList":[5],"delay":0.0,"wait":true,"NodeName":"EndNode","NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"type":0,"id":1,"x":44.0,"y":233.0,"color":[1.0,1.0,1.0,1.0],"linkList":[2,4],"preList":[],"delay":0.0,"wait":true,"NodeName":"StartNode","NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"type":1,"id":2,"x":281.0,"y":145.0,"color":[0.0,1.0,1.0,1.0],"linkList":[5],"preList":[1],"delay":5.0,"wait":true,"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
+  - '{"type":2,"id":3,"x":771.0,"y":235.0,"color":[1.0,1.0,1.0,1.0],"linkList":[],"preList":[5],"delay":0.0,"wait":true,"NodeName":"EndNode","NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"type":1,"id":4,"x":282.0,"y":312.0,"color":[1.0,0.0,1.0,1.0],"linkList":[5],"preList":[1],"delay":1.0,"wait":true,"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
+  - '{"type":1,"id":5,"x":532.0,"y":236.0,"color":[0.0,1.0,0.0,1.0],"linkList":[3],"preList":[2,4],"delay":2.0,"wait":true,"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
   targetList:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  graphOffset: {x: 80, y: 197}
+  graphOffset: {x: 42, y: 152}

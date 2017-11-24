@@ -40,5 +40,10 @@ namespace Framework
             Log.Debug(string.Format("{0} execute finish, delay {1}s", NodeName, delay));
             FinishExecute();
         }
+
+        public override bool CheckExecutable()
+        {
+            return base.CheckExecutable();
+        }
     }
 }
