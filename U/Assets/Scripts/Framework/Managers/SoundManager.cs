@@ -120,6 +120,10 @@ namespace Framework
             {
                 PlaySoundClip(SoundType.BGM, _loopSoundStack.Peek());
             }
+            else
+            {
+                Stop(SoundType.BGM);
+            }
         }
 
         public void Pause(SoundType soundType)
