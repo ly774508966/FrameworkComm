@@ -11,6 +11,7 @@ namespace Project
         void Start()
         {
             E2JManager.instance.enabled = true;
+            SoundManager.instance.enabled = true;
         }
     }
 }

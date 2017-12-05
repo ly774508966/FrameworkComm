@@ -16,7 +16,7 @@ namespace Framework.UI
             transform.localScale = Vector3.one;
         }
 
-        public static GameObject AddChild(GameObject parent, GameObject prefab, bool resetTransform = true)
+        public static GameObject AddChild(GameObject parent, GameObject prefab = null, bool resetTransform = true)
         {
             GameObject go = null;
 
