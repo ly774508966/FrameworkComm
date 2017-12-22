@@ -12,15 +12,13 @@ MonoBehaviour:
   m_Name: Flow Graph
   m_EditorClassIdentifier: 
   nodeJsonList:
-  - '{"type":0,"id":1,"x":44.0,"y":233.0,"color":[1.0,1.0,1.0,1.0],"linkList":[2,4],"preList":[],"delay":0.0,"wait":true,"NodeName":"StartNode","NodeWidth":150.0,"NodeHeight":50.0}'
-  - '{"type":1,"id":2,"x":281.0,"y":145.0,"color":[0.0,1.0,1.0,1.0],"linkList":[5],"preList":[1],"delay":5.0,"wait":true,"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
-  - '{"type":2,"id":3,"x":771.0,"y":235.0,"color":[1.0,1.0,1.0,1.0],"linkList":[],"preList":[5],"delay":0.0,"wait":true,"NodeName":"EndNode","NodeWidth":150.0,"NodeHeight":50.0}'
-  - '{"type":1,"id":4,"x":282.0,"y":312.0,"color":[1.0,0.0,1.0,1.0],"linkList":[5],"preList":[1],"delay":1.0,"wait":true,"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
-  - '{"type":1,"id":5,"x":532.0,"y":236.0,"color":[0.0,1.0,0.0,1.0],"linkList":[3],"preList":[2,4],"delay":2.0,"wait":true,"NodeName":"NormalNode","NodeWidth":180.0,"NodeHeight":50.0}'
-  targetList:
+  - '{"type":0,"id":1,"x":114.0,"y":401.0,"color":[1.0,1.0,1.0,1.0],"linkList":[3],"preList":[],"delay":0.0,"wait":true,"NodeName":"StartNode","prefab":null,"NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"type":2,"id":2,"x":817.0,"y":172.0,"color":[1.0,1.0,1.0,1.0],"linkList":[],"preList":[4],"delay":0.0,"wait":true,"NodeName":"EndNode","prefab":null,"NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"targetPosition":{"x":0.0,"y":200.0,"z":0.0,"normalized":{"x":0.0,"y":1.0,"z":0.0,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":200.0,"sqrMagnitude":40000.0},"type":1,"id":3,"x":362.0,"y":312.0,"color":[0.0,1.0,1.0,1.0],"linkList":[4],"preList":[1],"delay":1.0,"wait":true,"NodeName":"SetPosition","prefab":null,"NodeWidth":150.0,"NodeHeight":50.0}'
+  - '{"targetPosition":{"x":0.0,"y":-200.0,"z":0.0,"normalized":{"x":0.0,"y":-1.0,"z":0.0,"magnitude":1.0,"sqrMagnitude":1.0},"magnitude":200.0,"sqrMagnitude":40000.0},"type":1,"id":4,"x":596.0,"y":232.0,"color":[1.0,0.0,1.0,1.0],"linkList":[2],"preList":[3],"delay":1.0,"wait":true,"NodeName":"SetPosition","prefab":null,"NodeWidth":150.0,"NodeHeight":50.0}'
+  prefabList:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
-  graphOffset: {x: 42, y: 152}
+  graphOffset: {x: -9, y: 57}

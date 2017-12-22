@@ -25,7 +25,6 @@ namespace Framework
         public override IEnumerator OnExecute()
         {
             yield return base.OnExecute();
-            Log.Debug(string.Format("StartNode execute finish, delay {0}s", delay));
             FinishExecute();
         }
     }

@@ -19,7 +19,7 @@ namespace Framework.UI
             style = new GUIStyle();
             style.alignment = TextAnchor.UpperRight;
             style.fontSize = Screen.height * 2 / 75;
-            style.normal.textColor = new Color(1.0f, 0.0f, 0.0f, 1.0f);
+            style.normal.textColor = new Color(0f, 1f, 0f, 1f);
         }
 
         void Update()

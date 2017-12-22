@@ -12,10 +12,10 @@ namespace Framework
 {
     public class FlowGraphExecutor : MonoBehaviour
     {
-        private const string FlowGraphRootName = "FlowGraphRoot";
-        private const string FlowGraphObjectName = "FlowGraph";
+        private const string FlowRootName = "FlowRoot";
+        private const string FlowGraphName = "FlowGraph";
 
-        private static GameObject FlowGraphRoot = null;
+        private static GameObject FlowRoot = null;
 
         public static FlowGraphExecutor Execute(Object flowGraphAsset, Action finishCallback = null)
         {
@@ -27,16 +27,16 @@ namespace Framework
             return Execute(FlowGraph.Load(flowGraphPath), finishCallback);
         }
 
-        public static FlowGraphExecutor Execute(FlowGraph graph, Action finishCallback = null)
+        public static FlowGraphExecutor Execute(FlowGraph flowGraph, Action finishCallback = null)
         {
-            if (graph == null || !graph.Initialize())
+            if (flowGraph == null || !flowGraph.Initialize())
             {
                 Log.Error("[FlowGraphExecutor.Execute] flow graph is null or invalid");
                 return null;
             }
 
             FlowGraphExecutor executor = GetOrCreateFlowGraphExecutor();
-            executor._graph = graph;
+            executor._flowGraph = flowGraph;
             executor._finishDelegate = finishCallback;
 
             return executor.Execute();
@@ -44,18 +44,18 @@ namespace Framework
 
         private static FlowGraphExecutor GetOrCreateFlowGraphExecutor()
         {
-            if (FlowGraphRoot == null)
+            if (FlowRoot == null)
             {
-                FlowGraphRoot = new GameObject(FlowGraphRootName);
+                FlowRoot = new GameObject(FlowRootName);
             }
 
-            GameObject flowGraphObject = new GameObject(FlowGraphObjectName);
-            UIUtils.SetChild(FlowGraphRoot, flowGraphObject);
+            GameObject flowGraphObject = new GameObject(FlowGraphName);
+            UIUtils.SetChild(FlowRoot, flowGraphObject);
 
             return flowGraphObject.AddComponent<FlowGraphExecutor>();
         }
 
-        private FlowGraph _graph;
+        private FlowGraph _flowGraph;
         private Action _finishDelegate;
 
         private HashSet<FlowNode> _curNodeHs;
@@ -64,7 +64,7 @@ namespace Framework
 
         public FlowGraphExecutor Execute()
         {
-            _curNodeHs = _graph.GetStartNodes();
+            _curNodeHs = _flowGraph.GetStartNodes();
 
             if (_curNodeHs != null)
             {
@@ -110,7 +110,7 @@ namespace Framework
                             int linkCount = curNode.linkList != null ? curNode.linkList.Count : 0;
                             for (int i = 0; i < linkCount; i++)
                             {
-                                FlowNode linkNode = _graph.GetNode(curNode.linkList[i]);
+                                FlowNode linkNode = _flowGraph.GetNode(curNode.linkList[i]);
                                 if (linkNode.GetCurState() == FlowNode.State.Wait)
                                 {
                                     linkNode.NotifyPreFinish();

@@ -25,7 +25,6 @@ namespace Framework
         public override IEnumerator OnExecute()
         {
             yield return base.OnExecute();
-            Log.Debug("EndNode execute finish");
             FinishExecute();
         }
     }

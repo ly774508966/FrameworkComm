@@ -7,26 +7,19 @@ using UnityEditor;
 /// </summary>
 namespace Framework
 {
-    public class NormalNode : FlowNode
+    public class SetPositionNode : FlowNode
     {
+        public Vector3 targetPosition = Vector3.zero;
+
         public override string NodeName
         {
-            get { return "NormalNode"; }
-        }
-
-        public override float NodeWidth
-        {
-            get { return 180f; }
-        }
-
-        public override float NodeHeight
-        {
-            get { return 50f; }
+            get { return "SetPosition"; }
         }
 
         public override void OnDrawProperty()
         {
             base.OnDrawProperty();
+            targetPosition = EditorGUILayout.Vector3Field("Target Position", targetPosition);
         }
 
         public override void OnDrawNode()
@@ -37,7 +30,12 @@ namespace Framework
         public override IEnumerator OnExecute()
         {
             yield return base.OnExecute();
-            Log.Debug(string.Format("{0} execute finish, delay {1}s", NodeName, delay));
+
+            if (actor != null)
+            {
+                actor.transform.localPosition = targetPosition;
+            }
+
             FinishExecute();
         }
 

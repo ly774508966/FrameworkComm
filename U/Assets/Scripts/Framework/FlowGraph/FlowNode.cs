@@ -12,11 +12,47 @@ namespace Framework
 {
     public class FlowNode
     {
+        public FlowNodeType type;
+        public int id;
+        public float x;
+        public float y;
+        public float[] color;
+        public List<int> linkList;
+        public List<int> preList;
+        public float delay;
+        public bool wait;
+
         public enum State
         {
             Wait = 0,
             Execute,
             Finish,
+        }
+
+        [NonSerialized]
+        private GameObject _prefab = null;
+        [NonSerialized]
+        private State _state = State.Wait;
+        [NonSerialized]
+        private int _preFinishCount = 0;
+        [NonSerialized]
+        private bool _propertyFold = true;
+
+        [NonSerialized]
+        public FlowGraph flowGraph;
+
+        public GameObject prefab
+        {
+            get { return _prefab; }
+            set { _prefab = type > FlowNodeType.Start && type < FlowNodeType.End ? value : null; }
+        }
+
+        protected GameObject actor
+        {
+            get
+            {
+                return flowGraph.actor;
+            }
         }
 
         public virtual string NodeName
@@ -33,23 +69,6 @@ namespace Framework
         {
             get { return 50f; }
         }
-
-        public FlowNodeType type;
-        public int id;
-        public float x;
-        public float y;
-        public float[] color;
-        public List<int> linkList;
-        public List<int> preList;
-        public float delay;
-        public bool wait;
-
-        [NonSerialized]
-        private GameObject _target = null;
-        [NonSerialized]
-        private State _state = State.Wait;
-        [NonSerialized]
-        private int _preFinishCount = 0;
 
         #region Create Node
         private static FlowNode CreateOrLoadFromJson(FlowNodeType type, string json = null)
@@ -72,15 +91,15 @@ namespace Framework
                         }
                     }
                     break;
-                case FlowNodeType.Normal:
+                case FlowNodeType.SetPosition:
                     {
                         if (fromJson)
                         {
-                            node = JsonConvert.DeserializeObject<NormalNode>(json) as NormalNode;
+                            node = JsonConvert.DeserializeObject<SetPositionNode>(json) as SetPositionNode;
                         }
                         else
                         {
-                            node = new NormalNode();
+                            node = new SetPositionNode();
                         }
                     }
                     break;
@@ -131,6 +150,7 @@ namespace Framework
         public static FlowNode CreateFromGraph(FlowGraph graph, FlowNodeType type, int id, Vector2 position)
         {
             FlowNode node = Create(type, id, position);
+            node.flowGraph = graph;
             node.SetRectInGraph(graph, node.x, node.y);
             graph.AddNode(node);
             return node;
@@ -183,6 +203,8 @@ namespace Framework
         public void FinishExecute()
         {
             _state = State.Finish;
+
+            Log.Debug(string.Format("{0} execute finish, delay {1}s", NodeName, delay));
         }
         #endregion
 
@@ -193,20 +215,27 @@ namespace Framework
 
             EditorGUILayout.Space();
 
-            if (type == FlowNodeType.Start)
+            _propertyFold = EditorGUILayout.Foldout(_propertyFold, "Base Setting");
+            if (_propertyFold)
             {
-                delay = EditorGUILayout.FloatField("Delay", delay);
-            }
-            else if (type == FlowNodeType.End)
-            {
-                wait = EditorGUILayout.Toggle("Wait", wait);
-            }
-            else
-            {
-                SetColor(EditorGUILayout.ColorField("Color", GetColor()));
-                _target = EditorGUILayout.ObjectField("Target", _target, typeof(GameObject), false) as GameObject;
-                delay = EditorGUILayout.FloatField("Delay", delay);
-                wait = EditorGUILayout.Toggle("Wait", wait);
+                EditorGUI.indentLevel++;
+
+                if (type == FlowNodeType.Start)
+                {
+                    delay = EditorGUILayout.FloatField("Delay", delay);
+                }
+                else if (type == FlowNodeType.End)
+                {
+                    wait = EditorGUILayout.Toggle("Wait", wait);
+                }
+                else
+                {
+                    SetColor(EditorGUILayout.ColorField("Color", GetColor()));
+                    delay = EditorGUILayout.FloatField("Delay", delay);
+                    wait = EditorGUILayout.Toggle("Wait", wait);
+                }
+
+                EditorGUI.indentLevel--;
             }
 
             EditorGUILayout.Space();
@@ -277,23 +306,6 @@ namespace Framework
             this.color[1] = color.g;
             this.color[2] = color.b;
             this.color[3] = color.a;
-        }
-
-        public GameObject GetTargetGameObject()
-        {
-            return _target;
-        }
-
-        public void SetTargetGameObject(GameObject target)
-        {
-            if (type > FlowNodeType.Start && type < FlowNodeType.End)
-            {
-                _target = target;
-            }
-            else
-            {
-                _target = null;
-            }
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Framework
         [HideInInspector]
         public List<string> nodeJsonList;
         [HideInInspector]
-        public List<GameObject> targetList;
+        public List<GameObject> prefabList;
         [HideInInspector]
         public Vector2 graphOffset;
 
@@ -25,6 +25,8 @@ namespace Framework
         private int _nodeNextID = 0;
         [NonSerialized]
         private bool _valid = false;
+
+        public GameObject actor { get; set; }
 
         public List<FlowNode> NodeList
         {
@@ -102,7 +104,7 @@ namespace Framework
 
         public bool Initialize()
         {
-            if (!_valid && nodeJsonList != null && targetList != null)
+            if (!_valid && nodeJsonList != null && prefabList != null)
             {
                 _nodeNextID = 0;
                 _nodeList.Clear();
@@ -112,7 +114,8 @@ namespace Framework
                 foreach (string json in nodeJsonList)
                 {
                     FlowNode node = FlowNode.CreateFromJson(json);
-                    node.SetTargetGameObject(targetList[index++]);
+                    node.flowGraph = this;
+                    node.prefab = prefabList[index++];
                     _nodeList.Add(node);
                 }
 
@@ -142,12 +145,12 @@ namespace Framework
         public Object Save(string path, bool create)
         {
             nodeJsonList = new List<string>();
-            targetList = new List<GameObject>();
+            prefabList = new List<GameObject>();
 
             foreach (FlowNode node in _nodeList)
             {
                 nodeJsonList.Add(JsonConvert.SerializeObject(node, Formatting.None, new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
-                targetList.Add(node.GetTargetGameObject());
+                prefabList.Add(node.prefab);
             }
 
             if (create)

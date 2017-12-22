@@ -7,7 +7,7 @@ namespace Framework
     {
         Start = 0,
         //#########//
-        Normal,
+        SetPosition,
         //#########//
         End,
         Count,
