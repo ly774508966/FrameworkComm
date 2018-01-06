@@ -90,7 +90,13 @@ def GetCellValue(cell, type):
 		if cell.ctype == 1:
 			return str(cell.value)
 		else:
-			return str(int(float(cell.value)))
+			iVal = int(float(cell.value))
+			fVal = float(cell.value)
+			if fVal > (float)(iVal):
+				str_value = str((float(cell.value))) + ''
+			else:
+				str_value = str(int(float(cell.value))) + ''
+			return str(int(float(str_value)))
 	elif type == 'Float':
 		return float(cell.value)
 	else:
