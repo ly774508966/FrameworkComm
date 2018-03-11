@@ -4,7 +4,7 @@
 /// </summary>
 namespace Framework.UI
 {
-    public class UIBaseCell : BaseView
+    public class UIBaseCell : BaseViewMVP
     {
         public int index { get; set; }
 

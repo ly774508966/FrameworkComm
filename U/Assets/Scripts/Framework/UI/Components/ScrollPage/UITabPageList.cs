@@ -10,7 +10,7 @@ using System.Collections;
 /// </summary>
 namespace Framework.UI
 {
-    public class UITabPageList : BaseView
+    public class UITabPageList : BaseViewMVP
     {
         public UISimpleObjectPool tabPool;
         public UISimpleObjectPool pagePool;

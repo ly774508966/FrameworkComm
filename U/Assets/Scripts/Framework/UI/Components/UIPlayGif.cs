@@ -10,7 +10,7 @@ using Image = UnityEngine.UI.Image;
 namespace Framework.UI
 {
     [RequireComponent(typeof(Image))]
-    public class UIPlayGif : BaseView
+    public class UIPlayGif : BaseViewMVP
     {
         public string gifPath;
 
