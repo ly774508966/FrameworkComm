@@ -9,7 +9,7 @@ using System.Collections.Generic;
 /// </summary>
 namespace Framework.UI
 {
-    public class UIScrollFanPage : BaseView, IBeginDragHandler, IEndDragHandler, IDragHandler
+    public class UIScrollFanPage : BaseViewMVP, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         public RectTransform content;
 

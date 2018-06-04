@@ -13,7 +13,7 @@ using UnityEditor;
 namespace Framework.UI
 {
     [ExecuteInEditMode]
-    public class UISpriteText : BaseView
+    public class UISpriteText : BaseViewMVP
     {
         [Serializable]
         public struct CharSpritePair

@@ -6,7 +6,7 @@
 /// </summary>
 namespace Framework
 {
-    public class BaseView : MonoBehaviour
+    public class BaseViewMVP : MonoBehaviour
     {
         protected bool bWaitToUpdate = true;
 

@@ -6,7 +6,7 @@
 /// </summary>
 namespace Framework.UI
 {
-    public class UIBaseList : BaseView
+    public class UIBaseList : BaseViewMVP
     {
         public UISimpleObjectPool objectPool;
 

@@ -1,4 +1,4 @@
-﻿&&MenuName=View&&
+﻿&&MenuName=ViewMVP&&
 &&Priority=1&&
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using Framework;
 /// </summary>
 namespace Project
 {
-    class ##ClassName## : BaseView
+    class ##ClassName## : BaseViewMVP
     {
         protected override void UpdateView()
         {

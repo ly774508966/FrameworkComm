@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 namespace Framework.UI
 {
-    public class UIScrollPage : BaseView, IBeginDragHandler, IEndDragHandler
+    public class UIScrollPage : BaseViewMVP, IBeginDragHandler, IEndDragHandler
     {
         public delegate void PageChangeDelegate(int currentPageIndex);
 

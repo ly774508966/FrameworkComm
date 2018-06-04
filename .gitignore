@@ -4,7 +4,8 @@
 /N/[Dd]ebug/
 /U/[Tt]emp/
 /N/[Tt]emp/
-/[Oo]bj/
+/U/[Oo]bj/
+/N[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
 /Assets/AssetStoreTools*
