@@ -175,9 +175,9 @@ namespace Framework.UI
                 }
             }
             if (Application.isPlaying)
-                UIUtils.RemoveAllChildren(spritesContainer.gameObject, false, spriteAddIdx);
+                UIUtils.RemoveAllChildrenFrom(spritesContainer.gameObject, false, spriteAddIdx);
             else
-                UIUtils.RemoveAllChildren(spritesContainer.gameObject, true, spriteAddIdx);
+                UIUtils.RemoveAllChildrenFrom(spritesContainer.gameObject, true, spriteAddIdx);
 
             currentTotalWidth = currentHorDock - padding;
 

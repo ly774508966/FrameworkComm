@@ -7,8 +7,8 @@ using UnityEngine;
 /// </summary>
 namespace Framework.UI
 {
-	public static class UIUtils 
-	{
+    public static class UIUtils
+    {
         public static void ResetTransform(Transform transform)
         {
             transform.localPosition = Vector3.zero;
@@ -31,13 +31,71 @@ namespace Framework.UI
 
             if (go != null && parent != null)
             {
+                SetParent(parent, go);
+            }
+
+            return go;
+        }
+
+        public static void LerpPosition(GameObject target, float x, float y, float z, float delta)
+        {
+            target.transform.position = Vector3.Lerp(target.transform.position, new Vector3(x, y, z), delta);
+        }
+
+        public static void SetOffsetPosition(GameObject target, float x, float y, float z)
+        {
+            target.transform.position += new Vector3(x, y, z);
+        }
+
+        public static void SetPosition(GameObject target, float x, float y, float z)
+        {
+            target.transform.position = new Vector3(x, y, z);
+        }
+
+        public static void SetRotation(GameObject target, float x, float y, float z)
+        {
+            target.transform.rotation = Quaternion.Euler(x, y, z);
+        }
+
+        public static void SetLocalPosition(GameObject target, float x, float y, float z)
+        {
+            target.transform.localPosition = new Vector3(x, y, z);
+        }
+
+        public static void SetLocalScale(GameObject target, float x, float y, float z)
+        {
+            target.transform.localScale = new Vector3(x, y, z);
+        }
+
+        public static void SetLocalRotation(GameObject target, float x, float y, float z)
+        {
+            target.transform.localRotation = Quaternion.Euler(x, y, z);
+        }
+
+        public static void SetRectTransformSizeDelta(RectTransform target, float width, float height)
+        {
+            target.sizeDelta = new Vector2(width, height);
+        }
+
+        public static void SetRectTransformWidthDelta(RectTransform target, float width)
+        {
+            target.sizeDelta = new Vector2(width, target.sizeDelta.y);
+        }
+
+        public static void SetRectTransformHeightDelta(RectTransform target, float height)
+        {
+            target.sizeDelta = new Vector2(target.sizeDelta.x, height);
+        }
+
+        public static void SetParent(GameObject parent, GameObject go, bool resetTransform = true)
+        {
+            if (go != null && parent != null)
+            {
                 Transform transform = go.transform;
                 transform.SetParent(parent.transform, false);
                 if (resetTransform) ResetTransform(transform);
                 SetLayer(go, parent.layer);
             }
-
-            return go;
         }
 
         public static void SetChild(GameObject parent, GameObject child)
@@ -60,7 +118,15 @@ namespace Framework.UI
 
         public static void SetLayer(GameObject go, int layer)
         {
-            go.layer = layer;
+            if (go == null || layer < 0)
+            {
+                return;
+            }
+
+            if (!go.layer.Equals(layer))
+            {
+                go.layer = layer;
+            }
 
             Transform transform = go.transform;
 
@@ -114,7 +180,7 @@ namespace Framework.UI
             DestroyGameObjects(children);
         }
 
-        public static void RemoveAllChildren(GameObject go, bool immediate, int from, int to = -1)
+        public static void RemoveAllChildrenFrom(GameObject go, bool immediate, int from, int to = -1)
         {
             List<GameObject> children = new List<GameObject>();
 
@@ -130,6 +196,15 @@ namespace Framework.UI
             }
 
             DestroyGameObjects(children, immediate);
+        }
+
+        public static void RemoveAllComponents<T>(GameObject go)
+        {
+            Component[] components = go.GetComponents(typeof(T));
+            foreach (Component component in components.CheckNull())
+            {
+                Object.Destroy(component);
+            }
         }
 
         public static List<Transform> GetAllChildrenTransforms(GameObject go)
@@ -180,5 +255,20 @@ namespace Framework.UI
 
             return component;
         }
-    }	
+
+        public static List<GameObject> FindGameObjectsInChildren(GameObject root, string name)
+        {
+            List<GameObject> childList = new List<GameObject>();
+
+            foreach (Transform child in root.transform)
+            {
+                if (child.gameObject.name.StartsWith(name))
+                {
+                    childList.Add(child.gameObject);
+                }
+            }
+
+            return childList;
+        }
+    }
 }

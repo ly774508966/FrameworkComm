@@ -8,13 +8,14 @@ namespace Framework
 {
     public static class iTweenUtils
     {
-        /// <summary>
-        /// 超时回调，生命周期依赖于挂载的GameObject
-        /// </summary>
-        public static void CreateTimeout(GameObject go, Action callback, float time, string name = "")
+        public static void CreateTimeout(
+            GameObject go,
+            Action callback,
+            float time,
+            string name = "")
         {
             iTween.ValueTo(go, iTween.Hash(
-                "name", "_iTweenTimeout_" + name,
+                "name", "_ITween_Timeout_" + name,
                 "time", time,
                 "from", 0,
                 "to", 1,
@@ -26,9 +27,58 @@ namespace Framework
             ));
         }
 
-        public static void ClearTimeout(GameObject go, string name = "")
+        public static void ClearTimeout(
+            GameObject timeObject,
+            string name = "")
         {
-            iTween.StopByName(go, "_iTweenTimeout_" + name);
+            iTween.StopByName(timeObject, "_ITweenTimeout_" + name);
+        }
+
+        public static void TickValue(
+            GameObject go,
+            float time,
+            float from,
+            float to,
+            Action update,
+            Action finish)
+        {
+            TickValue(go, time, from, to, update, finish);
+        }
+
+        public static void TickValue(
+            GameObject go,
+            float time,
+            float from,
+            float to,
+            Action update,
+            Action finish,
+            iTween.EaseType easeType = iTween.EaseType.linear,
+            string name = "")
+        {
+            iTween.ValueTo(go, iTween.Hash(
+                "name", "_ITween_ValueTo_" + name,
+                "time", time,
+                "from", from,
+                "to", to,
+                "easetype", easeType,
+                "onupdate", (Action<object>)((x) =>
+                {
+                    update.Call();
+                }),
+                "oncomplete", (Action<object>)((x) =>
+                {
+                    finish.Call();
+                })
+            ));
+        }
+
+        public static void MoveTo(
+            this GameObject go,
+            Vector3 position,
+            float time,
+            Action callback)
+        {
+            MoveTo(go, position, time, callback);
         }
 
         public static void MoveTo(
@@ -36,16 +86,16 @@ namespace Framework
             Vector3 position,
             float time,
             Action callback,
-            iTween.EaseType easeType = iTween.EaseType.linear,
-            bool isLocal = false,
-            string name = "")
+            iTween.EaseType easeType,
+            string name = "",
+            bool local = false)
         {
             go.SetActive(true);
             iTween.MoveTo(go, iTween.Hash(
                 "position", position,
                 "time", time,
-                "islocal", isLocal,
-                "name", "_ITweenMoveTo_" + name,
+                "islocal", local,
+                "name", "_ITween_MoveTo_" + name,
                 "easetype", easeType,
                 "oncomplete", (Action<object>)((x) =>
                 {
