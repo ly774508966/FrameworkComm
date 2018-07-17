@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Base list, and cell script need to derive from UIBaseCell
@@ -14,6 +15,8 @@ namespace Framework.UI
 
         protected object[] _datas;
 
+        protected List<UIBaseCell> _cells = new List<UIBaseCell>();
+
         public object[] datas
         {
             get
@@ -28,31 +31,52 @@ namespace Framework.UI
             }
         }
 
+        public void Refresh()
+        {
+            UpdateView();
+        }
+
+        public void RefreshCell(int index, object data)
+        {
+            if (index >= 0 && index < _cells.Count)
+            {
+                if (_cells[index] != null)
+                {
+                    _cells[index].data = data;
+                    _cells[index].index = index;
+                }
+            }
+        }
+
         protected override void UpdateView()
         {
             base.UpdateView();
-            RemoveItems();
-            AddItems();
+            RemoveCells();
+            AddCells();
         }
 
         protected virtual void OnDataChanged() { }
 
-        void AddItems()
+        void AddCells()
         {
             int length = _datas != null ? _datas.Length : 0;
             for (int i = 0; i < length; i++)
             {
-                object itemData = _datas[i];
-                GameObject itemGo = objectPool.GetObject();
-                itemGo.transform.SetParent(contentPanel, false);
+                GameObject cellGo = objectPool.GetObject();
+                cellGo.transform.SetParent(contentPanel, false);
 
-                UIBaseCell baseItem = itemGo.GetComponent<UIBaseCell>();
-                baseItem.data = itemData;
-                baseItem.index = i;
+                UIBaseCell baseCell = cellGo.GetComponent<UIBaseCell>();
+                if (baseCell != null)
+                {
+                    baseCell.data = _datas[i];
+                    baseCell.index = i;
+                }
+
+                _cells.Add(baseCell);
             }
         }
 
-        void RemoveItems()
+        void RemoveCells()
         {
             while (contentPanel.childCount > 0)
             {
@@ -65,6 +89,8 @@ namespace Framework.UI
                 }
                 objectPool.ReturnObject(toRemove);
             }
+
+            _cells.Clear();
         }
     }
 }
