@@ -16,8 +16,8 @@ namespace Framework
 
         [SerializeField]
         private FlowGraph flowGraph;
-        [SerializeField]
-        private TriggerType triggerType = TriggerType.None;
+        //[SerializeField]
+        //private TriggerType triggerType = TriggerType.None;
         [SerializeField]
         private GameObject actor;
 
