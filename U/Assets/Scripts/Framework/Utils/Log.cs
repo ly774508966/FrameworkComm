@@ -18,6 +18,8 @@ namespace Framework
         private static int iMaxLogFrameCount = 1;
 
         private static int iMaxLogFileSize = 5 * 1024 * 1024;
+        private static int iMaxLastLogSize = 60 * 1024;
+        private static int iMaxLogLineSize = 3000;
 
         private static string sLogFilePath = "";
 
@@ -25,14 +27,11 @@ namespace Framework
 
         private static object writeLock = new object();
 
-        public static int iMaxLastLogSize = 60 * 1024;
-        public static int iMaxLogLineSize = 3000;
+        private static StringBuilder sLastLogSB = new StringBuilder();
 
-        public static StringBuilder sLastLogSB = new StringBuilder();
+        private static Action Break = UnityEngine.Debug.Break;
 
         public static bool bLogDebugEnabled = true;
-
-        public static Action Break = UnityEngine.Debug.Break;
 
         public static string logFileName
         {
@@ -49,13 +48,20 @@ namespace Framework
                     Directory.CreateDirectory(sLogFilePath);
                 }
                 sLogFilePath += value;
+#elif UNITY_STANDALONE
+                sLogFilePath = Application.dataPath + "/../Log/";
+                if (!Directory.Exists(sLogFilePath))
+                {
+                    Directory.CreateDirectory(sLogFilePath);
+                }
+                sLogFilePath += value;
 #elif UNITY_ANDROID
-                logFilePath = "/sdcard/" + value;
+                sLogFilePath = "/sdcard/" + value;
 #elif UNITY_IPHONE
                 if (BuildConfig.isReleaseBuild)
-                    logFilePath = Application.temporaryCachePath + "/" + value;
+                    sLogFilePath = Application.temporaryCachePath + "/" + value;
                 else
-                    logFilePath = Application.persistentDataPath + "/" + value;
+                    sLogFilePath = Application.persistentDataPath + "/" + value;
 #endif
             }
         }
@@ -65,14 +71,14 @@ namespace Framework
             PrintLine(LogType.Error, str);
         }
 
+        public static void ErrorFormat(string formatStr, params object[] args)
+        {
+            PrintLine(LogType.Error, string.Format(formatStr, args));
+        }
+
         public static void Debug(string str)
         {
             PrintLine(LogType.Log, str);
-        }
-
-        public static void Error(string formatStr, params object[] args)
-        {
-            PrintLine(LogType.Error, string.Format(formatStr, args));
         }
 
         public static void DebugFormat(string formatStr, params object[] args)
@@ -100,6 +106,7 @@ namespace Framework
                     StackTrace st = new StackTrace(true);
 
                     int frameIndex = (Application.platform == RuntimePlatform.IPhonePlayer ? 1 : 2);
+
                     for (int printIndex = 0; printIndex < iMaxLogFrameCount && frameIndex < st.FrameCount - 1; printIndex++, frameIndex++)
                     {
                         StackFrame sf = st.GetFrame(frameIndex);
@@ -140,7 +147,7 @@ namespace Framework
             {
                 WriteLogToFile(sLogLine);
 #if UNITY_EDITOR
-                WriteToConsole(logType, sLogLine);
+                WriteLogToConsole(logType, sLogLine);
 #endif
             }
         }
@@ -153,10 +160,11 @@ namespace Framework
                 {
                     if (sLogLine.Length > iMaxLogLineSize)
                     {
-                        sLogLine = sLogLine.Substring(0, iMaxLogLineSize);//每一行有最大的长度限制
+                        sLogLine = sLogLine.Substring(0, iMaxLogLineSize);
                     }
 
                     sLastLogSB.Append(sLogLine);
+
                     if (sLastLogSB.Length > iMaxLastLogSize)
                     {
                         sLastLogSB.Remove(0, iMaxLastLogSize / 2);
@@ -165,7 +173,7 @@ namespace Framework
             }
         }
 
-        private static void WriteToConsole(LogType logType, string sLogLine)
+        private static void WriteLogToConsole(LogType logType, string sLogLine)
         {
 #if UNITY_IPHONE && !UNITY_EDITOR
 			Console.Write(sLogLine);
@@ -177,7 +185,34 @@ namespace Framework
 #endif
         }
 
-        private static void CheckFileLength(string logFilePath)
+        private static void WriteLogToFile(string sLogLine)
+        {
+            if (sLogFilePath.Length > 0)
+            {
+                lock (writeLock)
+                {
+                    try
+                    {
+                        if (!File.Exists(sLogFilePath))
+                        {
+                            File.WriteAllText(sLogFilePath, sLogLine);
+                        }
+                        else
+                        {
+                            CheckLogFileLength(sLogFilePath);
+                            File.AppendAllText(sLogFilePath, sLogLine);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        UnityEngine.Debug.Log(e.ToString());
+                    }
+                    finally { }
+                }
+            }
+        }
+
+        private static void CheckLogFileLength(string logFilePath)
         {
             FileInfo f = new FileInfo(logFilePath);
             if (f.Length > iMaxLogFileSize)
@@ -191,34 +226,6 @@ namespace Framework
                 BinaryWriter bw = new BinaryWriter(File.Open(logFilePath, FileMode.Create, FileAccess.ReadWrite));
                 bw.Write(by);
                 bw.Close();
-            }
-        }
-
-        private static void WriteLogToFile(string sLogLine)
-        {
-            if (sLogFilePath.Length > 0)
-            {
-                lock (writeLock)
-                {
-                    try
-                    {
-                        if (!File.Exists(sLogFilePath))
-                        {
-
-                            File.WriteAllText(sLogFilePath, sLogLine);
-                        }
-                        else
-                        {
-                            CheckFileLength(sLogFilePath);
-                            File.AppendAllText(sLogFilePath, sLogLine);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        UnityEngine.Debug.Log(e.ToString());
-                    }
-                    finally { }
-                }
             }
         }
 
