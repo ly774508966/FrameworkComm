@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Framework.UI;
 using Object = UnityEngine.Object;
 
 /// <summary>
@@ -50,7 +49,7 @@ namespace Framework
             }
 
             GameObject flowGraphObject = new GameObject(FlowGraphName);
-            UIUtils.SetChild(FlowRoot, flowGraphObject);
+            UnityUtils.SetChild(FlowRoot, flowGraphObject);
 
             return flowGraphObject.AddComponent<FlowGraphExecutor>();
         }

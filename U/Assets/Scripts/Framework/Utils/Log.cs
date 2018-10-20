@@ -29,7 +29,7 @@ namespace Framework
 
         private static StringBuilder sLastLogSB = new StringBuilder();
 
-        private static Action Break = UnityEngine.Debug.Break;
+        //private static Action Break = UnityEngine.Debug.Break;
 
         public static bool bLogDebugEnabled = true;
 

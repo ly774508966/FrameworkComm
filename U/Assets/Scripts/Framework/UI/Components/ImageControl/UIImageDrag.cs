@@ -27,10 +27,10 @@ namespace Framework.UI
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            Canvas canvas = UIUtils.FindInParent<Canvas>(gameObject);
+            Canvas canvas = UnityUtils.FindInParent<Canvas>(gameObject);
             if (canvas != null)
             {
-                GameObject draggingGameObject = UIUtils.AddChild(canvas.gameObject);
+                GameObject draggingGameObject = UnityUtils.AddChild(canvas.gameObject);
                 draggingGameObject.name = gameObject.name;
                 draggingGameObject.transform.SetAsLastSibling();
 

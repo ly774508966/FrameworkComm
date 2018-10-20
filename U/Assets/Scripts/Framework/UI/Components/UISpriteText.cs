@@ -124,7 +124,7 @@ namespace Framework.UI
             }
             else
             {
-                letterObject = UIUtils.AddChild(spritesContainer.gameObject, null);
+                letterObject = UnityUtils.AddChild(spritesContainer.gameObject, null);
                 letterObject.name = "Letter";
                 image = letterObject.AddComponent<Image>();
             }
@@ -155,7 +155,7 @@ namespace Framework.UI
 
             if (transform.childCount == 0)
             {
-                UIUtils.AddChild(gameObject, null);
+                UnityUtils.AddChild(gameObject, null);
             }
             spritesContainer = transform.GetChild(0);
             spritesContainer.name = "SpritesContainer";
@@ -175,9 +175,9 @@ namespace Framework.UI
                 }
             }
             if (Application.isPlaying)
-                UIUtils.RemoveAllChildrenFrom(spritesContainer.gameObject, false, spriteAddIdx);
+                UnityUtils.RemoveAllChildrenFrom(spritesContainer.gameObject, false, spriteAddIdx);
             else
-                UIUtils.RemoveAllChildrenFrom(spritesContainer.gameObject, true, spriteAddIdx);
+                UnityUtils.RemoveAllChildrenFrom(spritesContainer.gameObject, true, spriteAddIdx);
 
             currentTotalWidth = currentHorDock - padding;
 
