@@ -89,7 +89,7 @@ namespace Framework
         public static void HandleException(string logString, string stackTrace, LogType logType)
         {
             string sLogLine = string.Concat(logType.ToString(), " ", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"), " ", logString, "\n", stackTrace);
-            AppendToLastLogs(sLogLine);
+            AppendToLastLog(sLogLine);
             WriteLogToFile(sLogLine);
         }
 
@@ -141,7 +141,7 @@ namespace Framework
                 );
             }
 
-            AppendToLastLogs(sLogLine);
+            AppendToLastLog(sLogLine);
 
             if (bLogDebugEnabled)
             {
@@ -152,7 +152,7 @@ namespace Framework
             }
         }
 
-        private static void AppendToLastLogs(string sLogLine)
+        private static void AppendToLastLog(string sLogLine)
         {
             if (iMaxLastLogSize > 0)
             {
@@ -283,6 +283,63 @@ namespace Framework
         public static void Debug(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12)
         {
             PrintLine(LogType.Log, string.Concat(str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, str11, str12));
+        }
+        #endregion
+
+        #region Error with string.Concat
+        public static void Error(string str1, string str2)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2));
+        }
+
+        public static void Error(string str1, string str2, string str3)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3));
+        }
+
+        public static void Error(string str1, string str2, string str3, string str4)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3, str4));
+        }
+
+        public static void Error(string str1, string str2, string str3, string str4, string str5)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3, str4, str5));
+        }
+
+        public static void Error(string str1, string str2, string str3, string str4, string str5, string str6)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3, str4, str5, str6));
+        }
+
+        public static void Error(string str1, string str2, string str3, string str4, string str5, string str6, string str7)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3, str4, str5, str6, str7));
+        }
+
+        public static void Error(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3, str4, str5, str6, str7, str8));
+        }
+
+        public static void Error(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3, str4, str5, str6, str7, str8, str9));
+        }
+
+        public static void Error(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3, str4, str5, str6, str7, str8, str9, str10));
+        }
+
+        public static void Error(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, str11));
+        }
+
+        public static void Error(string str1, string str2, string str3, string str4, string str5, string str6, string str7, string str8, string str9, string str10, string str11, string str12)
+        {
+            PrintLine(LogType.Error, string.Concat(str1, str2, str3, str4, str5, str6, str7, str8, str9, str10, str11, str12));
         }
         #endregion
     }

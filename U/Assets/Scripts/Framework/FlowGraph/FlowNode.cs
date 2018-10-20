@@ -204,7 +204,7 @@ namespace Framework
         {
             _state = State.Finish;
 
-            Log.Debug(string.Format("{0} execute finish, delay {1}s", NodeName, delay));
+            Log.DebugFormat("{0} execute finish, delay {1}s", NodeName, delay);
         }
         #endregion
 

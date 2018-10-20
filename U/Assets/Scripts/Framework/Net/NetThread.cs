@@ -212,7 +212,7 @@ namespace Framework
                     }
                     catch (Exception ex)
                     {
-                        Log.Debug(string.Format("SenderThead Write Exception: {0}, {1}, {2}", ex.Message, ex.StackTrace, ex.InnerException.Message));
+                        Log.DebugFormat("SenderThead Write Exception: {0}, {1}, {2}", ex.Message, ex.StackTrace, ex.InnerException.Message);
                     }
 
                     lock (_packetsToSend)
