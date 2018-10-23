@@ -21,7 +21,7 @@ namespace Framework
 
             DontDestroyOnLoad(gameObject);
 
-            Log.logFileName = "Framework.log";
+            Log.logFileName = FrameworkConfig.LogFileName;
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = 60;
 

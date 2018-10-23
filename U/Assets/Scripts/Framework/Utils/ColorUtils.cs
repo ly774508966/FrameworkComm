@@ -7,6 +7,8 @@ namespace Framework
 {
     public static class ColorUtils
     {
+        public static Color TransparentColor = new Color(0f, 0f, 0f, 0f);
+
         public static string ColorToHex(Color color)
         {
             int r = Mathf.RoundToInt(color.r * 255f);

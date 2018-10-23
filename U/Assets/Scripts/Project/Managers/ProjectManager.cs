@@ -1,4 +1,5 @@
 ﻿using Framework;
+using Framework.UI;
 
 /// <summary>
 /// Managers初始化
@@ -6,12 +7,13 @@
 /// </summary>
 namespace Project
 {
-    public class ProjectManager : MonoSingleton<ProjectManager>
+    public sealed class ProjectManager : MonoSingleton<ProjectManager>
     {
         void Start()
         {
             E2JManager.instance.enabled = true;
             SoundManager.instance.enabled = true;
+            UIPopManager.instance.enabled = true;
         }
     }
 }
