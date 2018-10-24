@@ -15,6 +15,7 @@ namespace Framework.UI
 
         private const string LayerName = "UIPop";
         private const int LayerDepth = 1;
+
         private const float MaskAlpha = 0.75f;
 
         private Dictionary<string, UIPopContainer> _popContainerDict = new Dictionary<string, UIPopContainer>();
@@ -51,25 +52,25 @@ namespace Framework.UI
             canvasObject.AddComponent<GraphicRaycaster>();
         }
 
-        public GameObject PopUp(string prefabPath, bool modal, bool blur = true, float alpha = MaskAlpha)
+        public GameObject PopUp(string path, bool modal, bool blur = true, float alpha = MaskAlpha)
         {
-            return _PopUp(prefabPath, (GameObject)Resources.Load(prefabPath), modal, blur, alpha);
+            return _PopUp(path, (GameObject)Resources.Load(path), modal, blur, alpha);
         }
 
-        public T PopUp<T>(string prefabPath, bool modal, bool blur = true, float alpha = MaskAlpha)
+        public T PopUp<T>(string path, bool modal, bool blur = true, float alpha = MaskAlpha)
         {
-            GameObject popObject = PopUp(prefabPath, modal, blur, alpha);
+            GameObject popObject = PopUp(path, modal, blur, alpha);
             return popObject.GetComponent<T>();
         }
 
-        public void PopUpAsync(string prefabPath, bool modal, bool blur = true, float alpha = MaskAlpha)
+        public void PopUpAsync(string path, bool modal, bool blur = true, float alpha = MaskAlpha)
         {
-            StartCoroutine(_PopUpAsync(prefabPath, modal, blur, alpha));
+            StartCoroutine(_PopUpAsync(path, modal, blur, alpha));
         }
 
-        public void PopDown(string prefabPath)
+        public void PopDown(string path)
         {
-            UIPopContainer container = _FindContainer(prefabPath);
+            UIPopContainer container = _FindContainer(path);
 
             if (container != null)
             {
@@ -77,9 +78,9 @@ namespace Framework.UI
             }
         }
 
-        private GameObject _PopUp(string prefabPath, GameObject prefab, bool modal, bool maskBlur, float maskAlpha)
+        private GameObject _PopUp(string path, GameObject prefab, bool modal, bool blur, float alpha)
         {
-            UIPopContainer container = _FindContainer(prefabPath);
+            UIPopContainer container = _FindContainer(path);
 
             if (container != null)
             {
@@ -88,50 +89,57 @@ namespace Framework.UI
                 return container.child;
             }
 
-            container = _CreateContainer(prefabPath);
-            container.Path = prefabPath;
-            container.Modal = modal;
-            container.DestroyDelegate = _OnDestroyContainer;
+            container = _CreateContainer(path);
+            container.DestroyDelegate = () =>
+            {
+                _RemoveContainer(path);
+            };
 
-            if (maskBlur)
+            container.SetModal(modal);
+
+            if (blur)
             {
                 container.SetMaskBlur();
             }
             else
             {
-                container.SetMaskAlpha(maskAlpha);
+                container.SetMaskAlpha(alpha);
             }
 
-            _popContainerDict.Add(prefabPath, container);
+            _popContainerDict.Add(path, container);
 
             return container.AddChild(prefab);
         }
 
-        private IEnumerator _PopUpAsync(string prefabPath, bool modal, bool maskBlur, float maskAlpha)
+        private IEnumerator _PopUpAsync(string path, bool modal, bool blur, float alpha)
         {
-            ResourceRequest request = Resources.LoadAsync(prefabPath);
+            ResourceRequest request = Resources.LoadAsync(path);
             yield return request;
-            _PopUp(prefabPath, request.asset as GameObject, modal, maskBlur, maskAlpha);
+            _PopUp(path, request.asset as GameObject, modal, blur, alpha);
         }
 
-        private UIPopContainer _CreateContainer(string prefabPath)
+        private UIPopContainer _CreateContainer(string path)
         {
             GameObject popObject = UnityUtils.AddChild(popCanvas.gameObject);
-            popObject.name = prefabPath;
+            popObject.name = path;
             return popObject.AddComponent<UIPopContainer>();
         }
 
-        private UIPopContainer _FindContainer(string prefabPath)
+        private UIPopContainer _FindContainer(string path)
         {
-            if (_popContainerDict.ContainsKey(prefabPath))
-                return _popContainerDict[prefabPath];
+            if (_popContainerDict.ContainsKey(path))
+            {
+                return _popContainerDict[path];
+            }
             return null;
         }
 
-        private void _OnDestroyContainer(string prefabPath)
+        private void _RemoveContainer(string path)
         {
-            if (_popContainerDict.ContainsKey(prefabPath))
-                _popContainerDict.Remove(prefabPath);
+            if (_popContainerDict.ContainsKey(path))
+            {
+                _popContainerDict.Remove(path);
+            }
         }
     }
 }

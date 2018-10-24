@@ -13,9 +13,9 @@ namespace Framework.UI
         public GameObject child { get; private set; }
         public RawImage mask { get; private set; }
 
-        public string Path { get; set; }
-        public bool Modal { get; set; }
-        public Action<string> DestroyDelegate { get; set; }
+        public Action DestroyDelegate { get; set; }
+
+        public bool Modal { get; private set; }
 
         private void Awake()
         {
@@ -42,13 +42,13 @@ namespace Framework.UI
 
             EventTrigger.Entry entry = new EventTrigger.Entry();
             entry.eventID = EventTriggerType.PointerClick;
-            entry.callback.AddListener(OnMaskPointClick);
+            entry.callback.AddListener(OnMaskPointerClick);
 
             EventTrigger eventTrigger = maskObject.AddComponent<EventTrigger>();
             eventTrigger.triggers.Add(entry);
         }
 
-        private void OnMaskPointClick(BaseEventData eventData)
+        private void OnMaskPointerClick(BaseEventData eventData)
         {
             if (Modal) return;
             RemoveContainer();
@@ -63,8 +63,18 @@ namespace Framework.UI
 
         public void RemoveContainer()
         {
-            DestroyDelegate.Call(Path);
+            DestroyDelegate.Call();
             Destroy(gameObject);
+        }
+
+        public void SetModal(bool modal)
+        {
+            Modal = modal;
+        }
+
+        public void SetTop()
+        {
+            transform.SetAsLastSibling();
         }
 
         public void SetMaskAlpha(float alpha)
@@ -90,11 +100,6 @@ namespace Framework.UI
             mask.texture = texture2D;
 
             BlurUtils.UnBlurCameras(cameras);
-        }
-
-        public void SetTop()
-        {
-            transform.SetAsLastSibling();
         }
     }
 }
