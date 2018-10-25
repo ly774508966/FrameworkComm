@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityStandardAssets.ImageEffects;
 
 /// <summary>
 /// @zhenhaiwang
@@ -12,10 +11,10 @@ namespace Framework
         {
             if (camera == null) return;
 
-            BlurOptimized blur = camera.gameObject.GetComponent<BlurOptimized>();
+            Effect.BlurOptimized blur = camera.gameObject.GetComponent<Effect.BlurOptimized>();
             if (blur == null)
             {
-                blur = camera.gameObject.AddComponent<BlurOptimized>();
+                blur = camera.gameObject.AddComponent<Effect.BlurOptimized>();
                 blur.blurShader = Shader.Find("Hidden/FastBlur");
             }
 
@@ -26,7 +25,7 @@ namespace Framework
         {
             if (camera == null) return;
 
-            BlurOptimized blur = camera.gameObject.GetComponent<BlurOptimized>();
+            Effect.BlurOptimized blur = camera.gameObject.GetComponent<Effect.BlurOptimized>();
             if (blur != null)
             {
                 blur.enabled = false;

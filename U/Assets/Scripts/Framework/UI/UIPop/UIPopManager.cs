@@ -15,10 +15,10 @@ namespace Framework.UI
 
         private const string LayerName = "UIPop";
         private const int LayerDepth = 1;
-
         private const float MaskAlpha = 0.75f;
 
-        private Dictionary<string, UIPopContainer> _popContainerDict = new Dictionary<string, UIPopContainer>();
+        private Dictionary<string, UIPopContainer> _popPath2ContainerDict = new Dictionary<string, UIPopContainer>();
+        private List<string> _popPathList = new List<string>();
 
         private void Awake()
         {
@@ -52,61 +52,76 @@ namespace Framework.UI
             canvasObject.AddComponent<GraphicRaycaster>();
         }
 
-        public GameObject PopUp(string path, bool modal, bool blur = true, float alpha = MaskAlpha)
+        public GameObject PopUp(string path, bool modal, bool blur, float alpha = MaskAlpha)
         {
             return _PopUp(path, (GameObject)Resources.Load(path), modal, blur, alpha);
         }
 
-        public T PopUp<T>(string path, bool modal, bool blur = true, float alpha = MaskAlpha)
+        public T PopUp<T>(string path, bool modal, bool blur, float alpha = MaskAlpha)
         {
             GameObject popObject = PopUp(path, modal, blur, alpha);
             return popObject.GetComponent<T>();
         }
 
-        public void PopUpAsync(string path, bool modal, bool blur = true, float alpha = MaskAlpha)
+        public void PopUpAsync(string path, bool modal, bool blur, float alpha = MaskAlpha)
         {
             StartCoroutine(_PopUpAsync(path, modal, blur, alpha));
         }
 
-        public void PopDown(string path)
+        public void PopBack()
         {
-            UIPopContainer container = _FindContainer(path);
-
-            if (container != null)
+            int popCount = _popPathList.Count;
+            if (popCount == 0)
             {
-                container.RemoveContainer();
+                return;
+            }
+
+            UIPopContainer container;
+
+            if (_popPath2ContainerDict.TryGetValue(_popPathList[popCount - 1], out container))
+            {
+                container.DestroyContainer();
             }
         }
 
         private GameObject _PopUp(string path, GameObject prefab, bool modal, bool blur, float alpha)
         {
-            UIPopContainer container = _FindContainer(path);
-
-            if (container != null)
+            if (prefab == null)
             {
+                Log.Error("Can not load prefab from path ", path);
+                return null;
+            }
+
+            UIPopContainer container;
+
+            if (_popPath2ContainerDict.TryGetValue(path, out container))
+            {
+                _UnCache(path);
+                _Cache(path, container);
+
                 container.SetTop();
 
                 return container.child;
             }
 
             container = _CreateContainer(path);
-            container.DestroyDelegate = () =>
-            {
-                _RemoveContainer(path);
-            };
-
-            container.SetModal(modal);
 
             if (blur)
             {
-                container.SetMaskBlur();
+                container.SetBlur();
             }
             else
             {
-                container.SetMaskAlpha(alpha);
+                container.SetAlpha(alpha);
             }
 
-            _popContainerDict.Add(path, container);
+            container.SetModal(modal);
+            container.DestroyDelegate = () =>
+            {
+                _UnCache(path);
+            };
+
+            _Cache(path, container);
 
             return container.AddChild(prefab);
         }
@@ -125,20 +140,21 @@ namespace Framework.UI
             return popObject.AddComponent<UIPopContainer>();
         }
 
-        private UIPopContainer _FindContainer(string path)
+        private void _Cache(string path, UIPopContainer container)
         {
-            if (_popContainerDict.ContainsKey(path))
+            if (!_popPath2ContainerDict.ContainsKey(path))
             {
-                return _popContainerDict[path];
+                _popPath2ContainerDict.Add(path, container);
+                _popPathList.Add(path);
             }
-            return null;
         }
 
-        private void _RemoveContainer(string path)
+        private void _UnCache(string path)
         {
-            if (_popContainerDict.ContainsKey(path))
+            if (_popPath2ContainerDict.ContainsKey(path))
             {
-                _popContainerDict.Remove(path);
+                _popPath2ContainerDict.Remove(path);
+                _popPathList.Remove(path);
             }
         }
     }

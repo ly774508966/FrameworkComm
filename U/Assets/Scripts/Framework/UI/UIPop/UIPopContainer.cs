@@ -12,10 +12,9 @@ namespace Framework.UI
     {
         public GameObject child { get; private set; }
         public RawImage mask { get; private set; }
+        public bool Modal { get; private set; }
 
         public Action DestroyDelegate { get; set; }
-
-        public bool Modal { get; private set; }
 
         private void Awake()
         {
@@ -51,7 +50,7 @@ namespace Framework.UI
         private void OnMaskPointerClick(BaseEventData eventData)
         {
             if (Modal) return;
-            RemoveContainer();
+            DestroyContainer();
         }
 
         public GameObject AddChild(GameObject prefab)
@@ -61,7 +60,7 @@ namespace Framework.UI
             return child;
         }
 
-        public void RemoveContainer()
+        public void DestroyContainer()
         {
             DestroyDelegate.Call();
             Destroy(gameObject);
@@ -77,7 +76,7 @@ namespace Framework.UI
             transform.SetAsLastSibling();
         }
 
-        public void SetMaskAlpha(float alpha)
+        public void SetAlpha(float alpha)
         {
             if (alpha <= 0f)
             {
@@ -89,7 +88,7 @@ namespace Framework.UI
             }
         }
 
-        public void SetMaskBlur()
+        public void SetBlur()
         {
             Camera[] cameras = new Camera[] { Camera.main };
 

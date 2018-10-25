@@ -26,24 +26,12 @@ namespace Project
             switch (index)
             {
                 case 1:
-                    {
-                        UIPopManager.instance.PopUp("UI/UITest", true);
-                    }
                     break;
                 case 2:
-                    {
-                        UIPopManager.instance.PopUp("UI/UITest", true, false, 0.5f);
-                    }
                     break;
                 case 3:
-                    {
-                        UIPopManager.instance.PopUp("UI/UITest", false);
-                    }
                     break;
                 case 4:
-                    {
-                        UIPopManager.instance.PopUp("UI/UITest", false, false);
-                    }
                     break;
                 default:
                     break;
