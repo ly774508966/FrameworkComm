@@ -10,7 +10,7 @@ namespace Framework.UI
     public class UISimpleObjectPool : MonoBehaviour
     {
         // the max cached object count, default is 50
-        public int iMaxCount = 50;
+        public int maxCount = 50;
         // the prefab that this object pool returns instances of
         public GameObject prefab;
         // collection of currently inactive instances of the prefab
@@ -45,15 +45,13 @@ namespace Framework.UI
             return spawnedGameObject;
         }
 
-        /// <summary>
-        /// return an instance of the prefab to the pool
-        /// </summary>
+        // return an instance of the prefab to the pool
         public void ReturnObject(GameObject toReturn)
         {
             UIPooledObject pooledObject = toReturn.GetComponent<UIPooledObject>();
 
             // if the instance came from this pool, return it to the pool, and no maximum cache count exceeded
-            if (pooledObject != null && pooledObject.pool == this && inactiveInstances.Count < iMaxCount)
+            if (pooledObject != null && pooledObject.pool == this && inactiveInstances.Count < maxCount)
             {
                 // make the instance a child of this and disable it
                 toReturn.transform.SetParent(transform, false);
@@ -70,9 +68,7 @@ namespace Framework.UI
         }
     }
 
-    /// <summary>
-    /// a component that simply identifies the pool that a GameObject came from
-    /// </summary>
+    // a component that simply identifies the pool that a GameObject came from
     public class UIPooledObject : MonoBehaviour
     {
         public UISimpleObjectPool pool;
