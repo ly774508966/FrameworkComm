@@ -659,9 +659,11 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: '1. Add "UIPop" Layer
 
-    2. Modify FrameworkConfig.cs
+    2. Set MainCamera Clear Flags to Depth Only
 
-    3. ...'
+    3. Modify FrameworkConfig.cs
+
+    4. ...'
 --- !u!222 &655892527
 CanvasRenderer:
   m_ObjectHideFlags: 0

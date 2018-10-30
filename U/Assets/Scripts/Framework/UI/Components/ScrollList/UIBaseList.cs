@@ -2,7 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Base list, and cell script need to derive from UIBaseCell
+/// Base list, and cell script need to be derived from UIBaseCell
 /// @zhenhaiwang
 /// </summary>
 namespace Framework.UI
@@ -33,18 +33,27 @@ namespace Framework.UI
 
         public void Refresh()
         {
-            UpdateView();
+            int length = _datas != null ? _datas.Length : 0;
+            for (int i = 0; i < length; i++)
+            {
+                _cells[i].InvalidView();
+            }
         }
 
         public void RefreshCell(int index, object data)
         {
             if (index >= 0 && index < _cells.Count)
             {
-                if (_cells[index] != null)
-                {
-                    _cells[index].data = data;
-                    _cells[index].index = index;
-                }
+                _cells[index].data = data;
+                _cells[index].index = index;
+            }
+        }
+
+        public void RefreshCell(int index)
+        {
+            if (index >= 0 && index < _cells.Count)
+            {
+                _cells[index].InvalidView();
             }
         }
 
