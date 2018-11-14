@@ -13,6 +13,8 @@ namespace Framework.UI
 
         public Transform contentPanel;
 
+        public int fixedChildCount = 0;
+
         protected object[] _datas;
 
         protected List<UIBaseCell> _cells = new List<UIBaseCell>();
@@ -57,6 +59,16 @@ namespace Framework.UI
             }
         }
 
+        public void PushCell(object data)
+        {
+            List<object> list = new List<object>(_datas);
+            list.Add(data);
+
+            _datas = list.ToArray();
+
+            _cells.Add(CreateCell(contentPanel.childCount - fixedChildCount));
+        }
+
         protected override void UpdateView()
         {
             base.UpdateView();
@@ -66,37 +78,49 @@ namespace Framework.UI
 
         protected virtual void OnDataChanged() { }
 
-        void AddCells()
+        private UIBaseCell CreateCell(int index)
+        {
+            GameObject cellGo = objectPool.GetObject();
+            cellGo.transform.SetParent(contentPanel, false);
+
+            UIBaseCell baseCell = cellGo.GetComponent<UIBaseCell>();
+            if (baseCell != null)
+            {
+                baseCell.data = _datas[index];
+                baseCell.index = index;
+            }
+
+            return baseCell;
+        }
+
+        private void DeleteCell(int index)
+        {
+            GameObject toRemove = contentPanel.transform.GetChild(index).gameObject;
+
+            UIBaseCell baseCell = toRemove.GetComponent<UIBaseCell>();
+            if (baseCell != null)
+            {
+                baseCell.data = null;
+                baseCell.index = 0;
+            }
+
+            objectPool.ReturnObject(toRemove);
+        }
+
+        private void AddCells()
         {
             int length = _datas != null ? _datas.Length : 0;
             for (int i = 0; i < length; i++)
             {
-                GameObject cellGo = objectPool.GetObject();
-                cellGo.transform.SetParent(contentPanel, false);
-
-                UIBaseCell baseCell = cellGo.GetComponent<UIBaseCell>();
-                if (baseCell != null)
-                {
-                    baseCell.data = _datas[i];
-                    baseCell.index = i;
-                }
-
-                _cells.Add(baseCell);
+                _cells.Add(CreateCell(i));
             }
         }
 
-        void RemoveCells()
+        private void RemoveCells()
         {
-            while (contentPanel.childCount > 0)
+            while (contentPanel.childCount > fixedChildCount)
             {
-                GameObject toRemove = contentPanel.transform.GetChild(0).gameObject;
-                UIBaseCell baseCell = toRemove.GetComponent<UIBaseCell>();
-                if (baseCell != null)
-                {
-                    baseCell.data = null;
-                    baseCell.index = 0;
-                }
-                objectPool.ReturnObject(toRemove);
+                DeleteCell(fixedChildCount);
             }
 
             _cells.Clear();
