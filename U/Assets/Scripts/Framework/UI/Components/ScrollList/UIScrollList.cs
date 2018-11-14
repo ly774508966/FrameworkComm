@@ -97,6 +97,21 @@ namespace Framework.UI
                 scroll.horizontalNormalizedPosition = 0f;
         }
 
+        public void ScrollToBottomSmooth()
+        {
+            _isAutoScrolling = true;
+            _verticalTargetPos = 0f;
+            _horizantalTargetPos = 1f;
+        }
+
+        public void ScrollToBottomImmediate()
+        {
+            if (_isVertical)
+                scroll.verticalNormalizedPosition = 0f;
+            if (_isHorizantal)
+                scroll.horizontalNormalizedPosition = 1f;
+        }
+
         public void ScrollToIndex(int index, bool immediate = false)
         {
             if (index < 0)

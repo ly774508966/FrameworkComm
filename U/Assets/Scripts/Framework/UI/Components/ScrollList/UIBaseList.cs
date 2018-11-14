@@ -66,6 +66,8 @@ namespace Framework.UI
 
             _datas = list.ToArray();
 
+            OnDataChanged();
+
             _cells.Add(CreateCell(contentPanel.childCount - fixedChildCount));
         }
 
