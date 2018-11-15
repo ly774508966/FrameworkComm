@@ -15,6 +15,7 @@ namespace Framework.UI
 
         private const string LayerName = "UIPop";
         private const int LayerDepth = 1;
+        private const int CanvasOrder = 1;
         private const float MaskAlpha = 0.75f;
 
         private Dictionary<string, UIPopContainer> _popPath2ContainerDict = new Dictionary<string, UIPopContainer>();
@@ -43,6 +44,7 @@ namespace Framework.UI
             popCanvas = canvasObject.AddComponent<Canvas>();
             popCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
             popCanvas.worldCamera = popCamera;
+            popCanvas.sortingOrder = CanvasOrder;
 
             CanvasScaler canvasScaler = canvasObject.AddComponent<CanvasScaler>();
             canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
